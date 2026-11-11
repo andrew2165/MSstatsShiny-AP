@@ -13,7 +13,9 @@ statmodelServer(
   preprocess_data,
   app_template = reactive(TEMPLATES$default),
   turnover_ratios = reactive(NULL),
-  condition_metadata = reactive(NULL)
+  condition_metadata = reactive(NULL),
+  tmt_summary = NULL,
+  bait_adjustment = reactive(NULL)
 )
 }
 \arguments{
@@ -30,6 +32,10 @@ statmodelServer(
 \item{preprocess_data}{stored function that returns preprocessed data}
 
 \item{app_template}{reactive returning the selected template name (e.g. TEMPLATES$default)}
+
+\item{tmt_summary}{Reactive returning the original summary and its input settings}
+
+\item{bait_adjustment}{Reactive returning the bait-adjusted summary or a validation error}
 }
 \value{
 list object with user selected options and matrix build

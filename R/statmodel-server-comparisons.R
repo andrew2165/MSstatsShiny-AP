@@ -76,7 +76,8 @@ get_experimental_conditions = function(loadpage_input, preprocess_data) {
              (loadpage_input$BIO == "PTM" & loadpage_input$DDA_DIA != "TMT")) {
     levels(preprocess_data$PTM$ProteinLevelData$GROUP)
   } else if (loadpage_input$DDA_DIA == "TMT") {
-    levels(preprocess_data$ProteinLevelData$Condition)
+    conditions <- levels(preprocess_data$ProteinLevelData$Condition)
+    if (is_tmt_protein(loadpage_input)) setdiff(conditions, c("Norm", "Empty")) else conditions
   } else {
     levels(preprocess_data$ProteinLevelData$GROUP)
   }

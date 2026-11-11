@@ -15,6 +15,9 @@
 #' @param preprocess_data stored function that returns preprocessed data
 #' @param app_template reactive returning the selected template name (e.g. TEMPLATES$default)
 #'
+#' @param tmt_summary Reactive returning the original summary and its input settings
+#' @param bait_adjustment Reactive returning the bait-adjusted summary or a validation error
+#'
 #' @importFrom MSstatsResponse visualizeResponseProtein
 #'
 #' @return list object with user selected options and matrix build
@@ -27,7 +30,9 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
                            get_data, preprocess_data,
                            app_template = reactive(TEMPLATES$default),
                            turnover_ratios = reactive(NULL),
-                           condition_metadata = reactive(NULL)) {
+                           condition_metadata = reactive(NULL),
+                           tmt_summary = NULL,
+                           bait_adjustment = reactive(NULL)) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -317,10 +322,18 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
         get_tmt_moderation_radio_button(loadpage_input(), session$ns)
       })
       
+      tmt_download <- shiny::reactiveVal(NULL)
+      tmt_group_comparison <- reactive({
+        !is.null(tmt_summary) && is_tmt_protein(loadpage_input()) &&
+          !identical(input[[NAMESPACE_STATMODEL$comparison_mode]],
+                     CONSTANTS_STATMODEL$comparison_mode_response_curve)
+      })
+
       # Run analysis
       data_comparison = eventReactive(input[[NAMESPACE_STATMODEL$modeling_start]], {
         req(contrast$matrix)
         matrix = contrast$matrix
+        tmt_download(NULL)
         if (input[[NAMESPACE_STATMODEL$comparison_mode]] ==
             CONSTANTS_STATMODEL$comparison_mode_response_curve) {
           if (isTRUE(app_template() %in% c(TEMPLATES$protein_turnover, TEMPLATES$chemoproteomics))) {
@@ -361,12 +374,45 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
           } else {
             fitResponseCurves(input, matrix, preprocess_data(), transform_dose = TRUE)
           }
+        } else if (tmt_group_comparison()) {
+          summary <- tmt_summary()
+          settings <- tmt_bait_settings(qc_input())
+          result <- bait_adjustment()
+          if (settings$enabled) {
+            if (!is.null(result$error)) {
+              showNotification(result$error, type = "error", duration = NULL,
+                               id = "bait-comparison")
+              validate(need(FALSE, result$error))
+            }
+            if (length(result$warnings)) {
+              showNotification(paste(result$warnings, "See the Bait QC box for coverage."),
+                               type = "warning", duration = NULL, id = "bait-comparison")
+            } else {
+              shiny::removeNotification("bait-comparison")
+            }
+            matrix <- bait_contrast_matrix(result$data, matrix)
+            model <- group_compare_bait_tmt(
+              result$data, matrix, isTRUE(as.logical(input[[NAMESPACE_STATMODEL$modeling_tmt_moderation]]))
+            )
+          } else {
+            shiny::removeNotification("bait-comparison")
+            model <- tmt_model(summary$data, input, matrix)
+          }
+          tmt_download(list(qc = summary$qc, upload = summary$upload, matrix = matrix,
+                            input = shiny::reactiveValuesToList(input), bait = settings))
+          model
         } else {
           dataComparison(input, qc_input(), loadpage_input(), matrix, preprocess_data())
         }
       })
       
       data_comparison_code = eventReactive(input[[NAMESPACE_STATMODEL$modeling_start]], {
+        if (tmt_group_comparison() || !is.null(tmt_download())) {
+          req(data_comparison(), tmt_download())
+          request <- tmt_download()
+          return(generate_analysis_code(request$qc, request$upload, request$matrix,
+                                        request$input, bait = request$bait))
+        }
         req(contrast$matrix)
         comp_mat = contrast$matrix
         generate_analysis_code(qc_input(), loadpage_input(), comp_mat, input, app_template())
@@ -529,6 +575,9 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
         enable("download_code")
         
         output$code.button = renderUI({
+          if (tmt_group_comparison()) {
+            req(tmt_download())
+          }
           ns = session$ns
           downloadButton(ns("download_code"), "Download analysis code", 
                          icon("download"),

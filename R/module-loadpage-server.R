@@ -516,7 +516,7 @@ loadpageServer <- function(id, parent_session, is_web_server = FALSE, app_templa
     })
 
     onclick("proceed1", {
-      get_data()
+      req(get_data())
       get_annot()
       shinyjs::show("summary_tables")
 
@@ -628,6 +628,7 @@ loadpageServer <- function(id, parent_session, is_web_server = FALSE, app_templa
                           selected = "DataProcessing")
       })
       output$summary_tables = renderUI({
+        req(get_data())
         ns <- session$ns
         is_turnover <- !is.null(app_template) && app_template() == TEMPLATES$protein_turnover
         is_chemo   <- !is.null(app_template) && app_template() == TEMPLATES$chemoproteomics

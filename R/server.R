@@ -62,6 +62,8 @@ server = function(input, output, session) {
     preprocess_data = preprocess_data,
     app_template = app_template,
     turnover_ratios = get_turnover_ratios,
+    tmt_summary = qc_values$tmtSummary,
+    bait_adjustment = qc_values$baitAdjustment,
     condition_metadata = get_condition_metadata
   )
   statmodel_input = statmodel_values$input

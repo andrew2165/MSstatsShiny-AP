@@ -479,6 +479,27 @@ tmt_model = function(data, input, contrast.matrix, busy_indicator = TRUE){
   
 }
 
+# Drop unused contrast columns for conditions that have no client data.
+bait_contrast_matrix <- function(data, contrast.matrix) {
+  proteins <- data$ProteinLevelData
+  remaining <- unique(as.character(proteins$Condition[is.finite(proteins$Abundance)]))
+  lost <- setdiff(colnames(contrast.matrix), remaining)
+  used <- lost[colSums(contrast.matrix[, lost, drop = FALSE] != 0) > 0]
+  if (length(used)) {
+    stop("No usable client abundance remains for these contrast conditions: ",
+         paste(used, collapse = ", "), ". Check coverage in the Bait QC box.",
+         call. = FALSE)
+  }
+  contrast.matrix[, setdiff(colnames(contrast.matrix), lost), drop = FALSE]
+}
+
+group_compare_bait_tmt <- function(data, contrast.matrix, moderated) {
+  MSstatsTMT::groupComparisonTMT(
+    data, contrast.matrix = contrast.matrix, moderated = moderated,
+    save_fitted_models = TRUE, use_log_file = FALSE, verbose = FALSE
+  )
+}
+
 #' Main PTM adjustment function
 #' 
 #' Main PTM function to model MSstatsShiny data. 

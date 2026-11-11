@@ -259,6 +259,21 @@ getAnnot <- function(input) {
   return(annot_file)
 }
 
+check_tmt_annotation_mixture <- function(annotation, input) {
+  if (is_tmt_protein(input) && is.data.frame(annotation)) {
+    if (!"Mixture" %in% names(annotation)) {
+      stop("The sample annotation CSV needs a Mixture column. Add a mixture ID for every row and re-upload it.",
+           call. = FALSE)
+    }
+    mixture <- as.character(annotation$Mixture)
+    if (any(is.na(mixture) | !nzchar(trimws(mixture)))) {
+      stop("The Mixture column in the sample annotation CSV has missing or blank values. Fill in a mixture ID for every row and re-upload it.",
+           call. = FALSE)
+    }
+  }
+  annotation
+}
+
 getAnnot1 <- function(input) {
   annot1 = input$annot1
   if(is.null(input$annot1)) {
@@ -578,8 +593,9 @@ getData <- function(input) {
     else if(input$filetype == 'maxq') {
       cat(file=stderr(), "Reached in maxq\n")
       if(input$DDA_DIA=="TMT"){
+        annotation <- check_tmt_annotation_mixture(an_maxq, input)
         mydata = MaxQtoMSstatsTMTFormat(evidence=ev_maxq,
-                                        annotation=an_maxq,
+                                        annotation=annotation,
                                         proteinGroups=pg_maxq,
                                         use_log_file = FALSE)
 
@@ -622,8 +638,9 @@ getData <- function(input) {
         data = read.csv(infile$datapath, header = TRUE, sep = input$sep_data,
                         stringsAsFactors=FALSE)
         # }
+        annotation <- check_tmt_annotation_mixture(getAnnot(input), input)
         mydata = PDtoMSstatsTMTFormat(input = data,
-                                      annotation = getAnnot(input),
+                                      annotation = annotation,
                                       which.proteinid = input$which.proteinid, ## same as default
                                       use_log_file = FALSE
         )
@@ -853,15 +870,16 @@ getData <- function(input) {
       # } else {
       data = read.csv(infile$datapath, sep=input$sep_data)
       # }
-      mydata = SpectroMinetoMSstatsTMTFormat(data, getAnnot(input),
+      annotation <- check_tmt_annotation_mixture(getAnnot(input), input)
+      mydata = SpectroMinetoMSstatsTMTFormat(data, annotation,
                                              use_log_file = FALSE)
     }
     else if(input$filetype == 'phil') {
       
       if (input$DDA_DIA=="TMT"){
-      
+        annotation <- check_tmt_annotation_mixture(getAnnot(input), input)
         mydata = PhilosophertoMSstatsTMTFormat(input = mydata, 
-                                               annotation = getAnnot(input),
+                                               annotation = annotation,
                                                use_log_file = FALSE)
         mydata$Condition = as.character(mydata$Condition)
         mydata[mydata$Condition == "NORM", "Condition"] = "Norm"
@@ -906,10 +924,10 @@ library(MSstatsPTM)\n", sep = "")
       codes = paste(codes, "data = read.csv(\"dataset.csv\", header = TRUE, sep = \";\")\n", sep = "")
     }
     else if(input$BIO != "PTM" &&  input$DDA_DIA == "TMT"){
-      codes = paste(codes, "data = PDtoMSstatsTMTFormat(input = MSstatsTMT::raw.pd,
+      codes = paste0(codes, "data = PDtoMSstatsTMTFormat(input = MSstatsTMT::raw.pd,
                                        annotation = MSstatsTMT::annotation.pd,
-                                       which.proteinid =\'", input$which.proteinid,"\',\n\t\t\t\t       ",
-                    "use_log_file = FALSE)\n", sep = "")
+                                       which.proteinid = ", deparse1(input$which.proteinid), ",
+                                       use_log_file = FALSE)\n")
     } else if (input$BIO == "PTM") {
       if (input$BIO == "PTM" && input$DDA_DIA == "TMT"){
         codes = paste(codes, "data = MSstatsPTM::raw.input.tmt\n", sep = "")
@@ -922,7 +940,8 @@ library(MSstatsPTM)\n", sep = "")
     if (input$BIO == "PTM") {
       codes = paste(codes, "\nptm_data = read.csv(\"Enter PTM data file path here\", sep =",input$sep_msstatsptmdata,")\nglobal_data = read.csv(\'Enter unmod data file path here\')\ndata = list(PTM = ptm_data, PROTEIN = unmod)\n")
     } else {
-      codes = paste(codes, "data = read.csv(\"Enter MSstats formatted data file path here\", sep=",input$sep_msstatsdata,")\n")
+      separator <- if (is_tmt_protein(input)) deparse1(input$sep_msstatsdata) else input$sep_msstatsdata
+      codes = paste(codes, "data = read.csv(\"Enter MSstats formatted data file path here\", sep=",separator,")\n")
     }
   } else {
 
@@ -954,8 +973,8 @@ library(MSstatsPTM)\n", sep = "")
 
         codes = paste(codes, "data = MaxQtoMSstatsTMTFormat(evidence=ev_maxq,
                                          annotation=an_maxq,
-                                         proteinGroups=\'", input$which.proteinid,"\',\n\t\t\t\t       ",
-                      "use_log_file = FALSE)\n", sep = "")
+                                         proteinGroups=pg_maxq,
+                                         use_log_file = FALSE)\n", sep = "")
       } else if (input$BIO=="PTM"){
         codes = paste(codes, "sites.data = read.csv(\"insert your PTM site data filepath\")\n data = MaxQtoMSstatsPTMFormat(sites.data, an_maxq, ev_maxq, pg_maxq, an_maxq)\n",
                       sep="")
@@ -988,15 +1007,15 @@ library(MSstatsPTM)\n", sep = "")
 
       if(input$DDA_DIA=="TMT"){
 
-        codes = paste(codes, "data = read.delim(\"insert your quantification dataset filepath\",sep=",input$sep_data,")
+        codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", sep = ", deparse1(input$sep_data), ")
                        annot_file = read.csv(\"insert your annotation filepath\")\n"
                       , sep = "")
 
 
         codes = paste(codes, "data = PDtoMSstatsTMTFormat(input = data,
                                        annotation = annot_file,
-                                       which.proteinid =\'", input$which.proteinid,"\',\n\t\t\t\t       ",
-                      "use_log_file = FALSE)\n", sep = "")
+                                       which.proteinid = ", deparse1(input$which.proteinid), ",
+                                       use_log_file = FALSE)\n", sep = "")
 
       }
       else{
@@ -1088,7 +1107,7 @@ library(MSstatsPTM)\n", sep = "")
     else if(input$filetype == 'openms') {
       if(input$DDA_DIA=="TMT"){
 
-        codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")\ndata = OpenMStoMSstatsTMTFormat(data, use_log_file = FALSE)\n"
+        codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data), ")\ndata = OpenMStoMSstatsTMTFormat(data, use_log_file = FALSE)\n"
                       , sep = "")
 
       }
@@ -1101,19 +1120,18 @@ library(MSstatsPTM)\n", sep = "")
     }
     else if(input$filetype == 'spmin') {
 
-      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")\nannot_file = read.csv(\"insert your annotation filepath\")\ndata = SpectroMinetoMSstatsTMTFormat(data, annot_file,
+      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data), ")\nannot_file = read.csv(\"insert your annotation filepath\")\ndata = SpectroMinetoMSstatsTMTFormat(data, annot_file,
                                               use_log_file = FALSE)"
                     , sep = "")
     }
     else if(input$filetype == 'phil' & input$DDA_DIA == "TMT") {
-
-      codes = paste(codes,"data = read.csv(\"insert your msstats filepath\",sep=",input$sep_data,")\n"
-                    , sep = "")
-      codes = paste(codes,"annot_file = read.csv(\"insert your annotation filepath\")\n"
-                    , sep = "")
-
-      codes = paste(codes, "data = PhilosophertoMSstatsTMTFormat(data,
-                                       annotation = annot_file)\n", sep = "")
+      codes = paste0(codes,
+        "data = read.csv(\"insert your msstats filepath\", sep = ", deparse1(input$sep_data), ")\n",
+        "annot_file = read.csv(\"insert your annotation filepath\")\n",
+        "data = MSstatsTMT::PhilosophertoMSstatsTMTFormat(data, annotation = annot_file, use_log_file = FALSE)\n",
+        "data$Condition = as.character(data$Condition)\n",
+        "data[data$Condition == \"NORM\", \"Condition\"] = \"Norm\"\n",
+        "data$Condition = factor(data$Condition)\n")
     }else if (input$filetype == 'phil' & input$BIO == "PTM"){
       codes = paste(codes,"data = read.csv(\"insert your msstats filepath\")\n"
                     , sep = "")
@@ -1142,7 +1160,7 @@ library(MSstatsPTM)\n", sep = "")
     }
   }
 
-  if (input$BIO != "PTM"){
+  if (input$BIO != "PTM" && !is_tmt_protein(input)) {
     codes = paste(codes,"data = unique(as.data.frame(data))\n", sep = "")
   }
   return(codes)

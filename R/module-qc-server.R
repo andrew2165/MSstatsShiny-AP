@@ -228,14 +228,27 @@ qcServer <- function(input, output, session, parent_session, loadpage_input, get
     )
   })
   
-  # preprocess data
-  preprocess_data = eventReactive(input$run, {
-
-   qc_input <- reactive({
-      input
-    })
-    preprocessData(qc_input(),loadpage_input(),get_data())
+  summarization <- eventReactive(input$run, {
+    qc_settings <- shiny::reactiveValuesToList(input)
+    upload_settings <- shiny::reactiveValuesToList(loadpage_input())
+    raw <- get_data()
+    req(raw)
+    channels <- NULL
+    if (is_tmt_protein(upload_settings)) {
+      columns <- c("Mixture", "TechRepMixture", "Run", "Channel", "Condition", "BioReplicate")
+      channels <- unique(as.data.frame(raw)[columns])
+    }
+    list(data = preprocessData(qc_settings, upload_settings, raw),
+         qc = qc_settings, upload = upload_settings, channels = channels)
   })
+  preprocess_data <- reactive(summarization()$data)
+  tmt_summary <- reactive({
+    req(is_tmt_protein(loadpage_input()))
+    result <- summarization()
+    req(identical(result$upload$proceed1, loadpage_input()$proceed1))
+    result
+  })
+  bait_adjustment <- bait_panel_server(input, output, session, loadpage_input, tmt_summary)
 
   # For protein turnover, re-level GROUP factor using TimeVal ordering from loadpage
   ordered_preprocess_data <- reactive({
@@ -700,6 +713,8 @@ qcServer <- function(input, output, session, parent_session, loadpage_input, get
     list(
       input = input,
       preprocessData = preprocess_data,
+      tmtSummary = tmt_summary,
+      baitAdjustment = bait_adjustment,
       turnoverRatios = turnover_ratios
     )
   )

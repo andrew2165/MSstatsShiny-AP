@@ -1,4 +1,7 @@
-generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app_template = TEMPLATES$default) {
+generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app_template = TEMPLATES$default, bait = NULL) {
+  if (!is.null(bait)) {
+    return(generate_tmt_protein_code(qc_input, loadpage_input, comp_mat, input, bait))
+  }
   codes = preprocessDataCode(qc_input, loadpage_input)
 
   # Check if this is a response curve analysis
@@ -141,4 +144,43 @@ generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app
   }
   
   return(codes)
+}
+
+generate_tmt_protein_code <- function(qc_input, loadpage_input, comp_mat, input, bait) {
+  literal <- function(value) paste(deparse(value), collapse = "\n")
+  qc_fields <- c("summarization", "global_norm", "reference_norm", "remove_norm_channel",
+                 "null", "null1", "maxQC1", "norm", "log", "names", "features_used",
+                 "n_feat", "summaryMethod", "MBi", "censInt", "remove50")
+  moderation <- NAMESPACE_STATMODEL$modeling_tmt_moderation
+  moderated <- isTRUE(as.logical(input[[moderation]]))
+  sha <- utils::packageDescription("MSstatsTMT")$RemoteSha
+
+  codes <- paste0(
+    getDataCode(loadpage_input),
+    "\n# Summarize with the same settings and function used in MSstatsShiny.\n",
+    "qc_settings = ", literal(qc_input[intersect(qc_fields, names(qc_input))]), "\n",
+    "summarized = MSstatsShiny::tmt_summarization_loop(\n",
+    "  data, qc_settings, list(DDA_DIA = \"TMT\"), busy_indicator = FALSE\n)\n",
+    "\n# Optional original protein intensity plot\n",
+    "# MSstatsTMT::dataProcessPlotsTMT(summarized, type = \"QCPlot\")\n",
+    "\ncontrast.matrix = ", literal(comp_mat), "\n",
+    "\nbait_protein = ", literal(bait$protein), "\n",
+    "missing_bait = ", literal(bait$policy), "\n"
+  )
+  if (isTRUE(bait$enabled)) {
+    return(paste0(
+      codes,
+      if (length(sha)) paste0("# MSstatsTMT source SHA ", sha, "\n"),
+      "comparison_data = MSstatsTMT::normalizeToBaitTMT(\n",
+      "  summarized, bait = bait_protein, missing_bait = missing_bait\n)\n",
+      "bait_audit = attr(comparison_data, \"BaitNormalization\")\n",
+      "model = MSstatsTMT::groupComparisonTMT(\n",
+      "  comparison_data, contrast.matrix = contrast.matrix, moderated = ", moderated, ",\n",
+      "  save_fitted_models = TRUE, use_log_file = FALSE, verbose = FALSE\n)\n"
+    ))
+  }
+  paste0(codes, "comparison_data = summarized\n",
+         "model = MSstatsShiny::tmt_model(\n",
+         "  comparison_data, ", literal(stats::setNames(list(moderated), moderation)),
+         ", contrast.matrix, busy_indicator = FALSE\n)\n")
 }
