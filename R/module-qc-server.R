@@ -238,12 +238,14 @@ qcServer <- function(input, output, session, parent_session, loadpage_input, get
       columns <- c("Mixture", "TechRepMixture", "Run", "Channel", "Condition", "BioReplicate")
       channels <- unique(as.data.frame(raw)[columns])
     }
-    list(data = preprocessData(qc_settings, upload_settings, raw),
+    processed <- preprocessData(qc_settings, upload_settings, raw)
+    if (is_lf_protein(upload_settings)) channels <- processed$FeatureLevelData
+    list(data = processed,
          qc = qc_settings, upload = upload_settings, channels = channels)
   })
   preprocess_data <- reactive(summarization()$data)
   tmt_summary <- reactive({
-    req(is_tmt_protein(loadpage_input()))
+    req(is_bait_protein(loadpage_input()))
     result <- summarization()
     req(identical(result$upload$proceed1, loadpage_input()$proceed1))
     result

@@ -1,4 +1,7 @@
 generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app_template = TEMPLATES$default, bait = NULL) {
+  if (!is.null(bait) && is_lf_protein(loadpage_input)) {
+    return(generate_lf_protein_code(qc_input, loadpage_input, comp_mat, bait))
+  }
   if (!is.null(bait)) {
     return(generate_tmt_protein_code(qc_input, loadpage_input, comp_mat, input, bait))
   }
@@ -183,4 +186,30 @@ generate_tmt_protein_code <- function(qc_input, loadpage_input, comp_mat, input,
          "model = MSstatsShiny::tmt_model(\n",
          "  comparison_data, ", literal(stats::setNames(list(moderated), moderation)),
          ", contrast.matrix, busy_indicator = FALSE\n)\n")
+}
+
+generate_lf_protein_code <- function(qc_input, loadpage_input, comp_mat, bait) {
+  literal <- function(value) paste(deparse(value), collapse = "\n")
+  fields <- c("norm", "log", "names", "features_used", "n_feat", "summaryMethod",
+              "MBi", "censInt", "remove50", "null", "null1", "maxQC", "maxQC1")
+  codes <- paste0(getDataCode(loadpage_input),
+    "\n# Reproduce the original summary used by MSstatsShiny; retain it for QC.\n",
+    "qc_settings = ", literal(qc_input[intersect(fields, names(qc_input))]), "\n",
+    "summarized = MSstatsShiny::lf_summarization_loop(\n",
+    "  data, qc_settings, list(BIO = \"Protein\", DDA_DIA = \"LType\"), busy_indicator = FALSE\n)\n",
+    "# MSstats::dataProcessPlots(summarized, type = \"QCPlot\")\n",
+    "contrast.matrix = ", literal(comp_mat), "\n",
+    "bait_protein = ", literal(bait$protein), "\n",
+    "missing_bait = ", literal(bait$policy), "\n",
+    "variance_method = ", literal(bait$variance_method), "\n")
+  if (isTRUE(bait$enabled)) {
+    codes <- paste0(codes,
+      "comparison_data = MSstats::normalizeToBait(\n",
+      "  summarized, bait = bait_protein, missing_bait = missing_bait,\n",
+      "  variance_method = variance_method\n)\n",
+      "bait_audit = attr(comparison_data, \"BaitNormalization\")\n")
+  } else codes <- paste0(codes, "comparison_data = summarized\n")
+  paste0(codes, "model = MSstats::groupComparison(\n",
+    "  contrast.matrix = contrast.matrix, data = comparison_data,\n",
+    "  use_log_file = FALSE, verbose = FALSE\n)\n")
 }

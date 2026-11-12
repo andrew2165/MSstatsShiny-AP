@@ -165,12 +165,12 @@ qcUI <- function(id) {
         
         tags$hr(),
         uiOutput(ns("turnover_ratios_sidebar")),
-        actionButton(ns("run"), "Run protein summarization"),
         conditionalPanel(
-          "input['loadpage-BIO'] === 'Protein' && input['loadpage-DDA_DIA'] === 'TMT'",
+          "input['loadpage-BIO'] === 'Protein' && (input['loadpage-DDA_DIA'] === 'TMT' || input['loadpage-DDA_DIA'] === 'LType')",
           tags$hr(),
           checkboxInput(ns("bait_enabled"), "Normalize to bait", value = FALSE)
         ),
+        actionButton(ns("run"), "Run protein summarization"),
         width = 3
       ),
       column(width = 8,

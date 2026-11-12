@@ -4,6 +4,38 @@ This repository contains the code for the R Shiny app MSstatsShiny, which utiliz
 
 This tutorial will walk through the steps on MSstatsShiny for performing differential abundance analysis for a dataset from Fragpipe. We use a case study of a DIA experiment that was analyzed using the FragPipe computational tool. The dataset originates from a clear cell renal cell carcinoma (ccRCC) study described in this [paper](https://pubmed.ncbi.nlm.nih.gov/31675502/). In the original study, researchers from the CPTAC profiled tumor (T) samples, together with normal adjacent tissue (NAT) samples from each cancer patient, indicating a paired design.
 
+## Personal fork: bait normalization
+
+For **Protein** analyses with **Label-Free** or **TMT** data, run protein
+summarization, then select the exact bait protein ID in **Bait normalization and
+QC**. The plot shows original summarized log2 bait abundance, including absent
+and non-finite samples. Hover over points to identify the biological replicate
+and run (and channel for TMT).
+
+**Normalize to bait** in the left sidebar defaults to off. When enabled, group
+comparison uses client minus bait log2 abundance from the fork's
+`MSstats::normalizeToBait()` for label-free data or
+`MSstatsTMT::normalizeToBaitTMT()` for TMT data. Existing intensity plots keep the
+original summary. An installed package without the required function produces a
+clear error when normalization is requested.
+
+Missing bait stops comparison by default. Explicitly choosing **Drop affected
+samples** removes all client rows for those samples and shows the dropped samples
+and remaining condition/replicate coverage. Check that coverage before interpreting
+contrasts. Label-free normalization requires log base 2 and single-label data.
+
+Label-free **Summary variance weights** defaults to **Ignore summary weights**.
+**Propagate client + bait variance** requires finite nonnegative summary variances
+and assumes zero covariance between client and bait summary errors; ordinary TMP
+summaries do not supply the necessary variances. Both policies give the same
+abundance ratios. Ratios describe recovery relative to bait, rather than absolute
+molecular stoichiometry.
+
+The downloaded analysis script records the settings used for the completed group
+comparison, including bait, missing-bait policy, and label-free variance policy.
+Replace its input file placeholders with the paths to your original files to
+rerun it in a fresh session with the same fork builds installed.
+
 ## Step 1: Installation
 
 All datasets for this tutorial can be found at this [link](https://github.com/Vitek-Lab/MSstatsShiny/tree/devel/inst/extdata/tutorial)

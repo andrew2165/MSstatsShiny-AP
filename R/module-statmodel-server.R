@@ -324,7 +324,7 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
       
       tmt_download <- shiny::reactiveVal(NULL)
       tmt_group_comparison <- reactive({
-        !is.null(tmt_summary) && is_tmt_protein(loadpage_input()) &&
+        !is.null(tmt_summary) && is_bait_protein(loadpage_input()) &&
           !identical(input[[NAMESPACE_STATMODEL$comparison_mode]],
                      CONSTANTS_STATMODEL$comparison_mode_response_curve)
       })
@@ -391,12 +391,18 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
               shiny::removeNotification("bait-comparison")
             }
             matrix <- bait_contrast_matrix(result$data, matrix)
-            model <- group_compare_bait_tmt(
+            model <- if (is_lf_protein(summary$upload)) {
+              MSstats::groupComparison(contrast.matrix = matrix, data = result$data,
+                                       use_log_file = FALSE, verbose = FALSE)
+            } else group_compare_bait_tmt(
               result$data, matrix, isTRUE(as.logical(input[[NAMESPACE_STATMODEL$modeling_tmt_moderation]]))
             )
           } else {
             shiny::removeNotification("bait-comparison")
-            model <- tmt_model(summary$data, input, matrix)
+            model <- if (is_lf_protein(summary$upload)) {
+              MSstats::groupComparison(contrast.matrix = matrix, data = summary$data,
+                                       use_log_file = FALSE, verbose = FALSE)
+            } else tmt_model(summary$data, input, matrix)
           }
           tmt_download(list(qc = summary$qc, upload = summary$upload, matrix = matrix,
                             input = shiny::reactiveValuesToList(input), bait = settings))

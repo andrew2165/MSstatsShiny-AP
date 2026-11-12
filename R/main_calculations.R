@@ -114,6 +114,8 @@ lf_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator =
   if (busy_indicator){
     remove_modal_progress() # remove it when done
   }
+  attr(preprocessed$ProteinLevelData, "MSstatsAbundanceScale") <-
+    if (identical(as.numeric(qc_input$log), 2)) "log2" else paste0("log", qc_input$log)
   return(preprocessed)
   
 }
@@ -482,7 +484,9 @@ tmt_model = function(data, input, contrast.matrix, busy_indicator = TRUE){
 # Drop unused contrast columns for conditions that have no client data.
 bait_contrast_matrix <- function(data, contrast.matrix) {
   proteins <- data$ProteinLevelData
-  remaining <- unique(as.character(proteins$Condition[is.finite(proteins$Abundance)]))
+  remaining <- if ("LogIntensities" %in% names(proteins)) {
+    unique(as.character(proteins$GROUP[is.finite(proteins$LogIntensities)]))
+  } else unique(as.character(proteins$Condition[is.finite(proteins$Abundance)]))
   lost <- setdiff(colnames(contrast.matrix), remaining)
   used <- lost[colSums(contrast.matrix[, lost, drop = FALSE] != 0) > 0]
   if (length(used)) {
