@@ -938,19 +938,19 @@ library(MSstatsPTM)\n", sep = "")
 
   } else if (input$filetype == "msstats") {
     if (input$BIO == "PTM") {
-      codes = paste(codes, "\nptm_data = read.csv(\"Enter PTM data file path here\", sep =",input$sep_msstatsptmdata,")\nglobal_data = read.csv(\'Enter unmod data file path here\')\ndata = list(PTM = ptm_data, PROTEIN = unmod)\n")
+      codes = paste(codes, "\nptm_data = read.csv(\"Enter PTM data file path here\", sep =", deparse1(input$sep_msstatsptmdata),")\nglobal_data = read.csv(\'Enter unmod data file path here\')\ndata = list(PTM = ptm_data, PROTEIN = unmod)\n")
     } else {
-      separator <- if (is_tmt_protein(input)) deparse1(input$sep_msstatsdata) else input$sep_msstatsdata
+      separator <- deparse1(input$sep_msstatsdata)
       codes = paste(codes, "data = read.csv(\"Enter MSstats formatted data file path here\", sep=",separator,")\n")
     }
   } else {
 
     if(input$filetype == '10col') {
-      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")\n", sep = "")
+      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data),")\n", sep = "")
     }
     else if(input$filetype == 'sky') {
       cat(file=stderr(), "Reached here in skyline\n")
-      codes = paste(codes, "data = read.csv(\"insert your MSstats report from Skyline filepath\", header = TRUE, sep = ",input$sep_skylinedata,", stringsAsFactors=F)\n", sep = "")
+      codes = paste(codes, "data = read.csv(\"insert your MSstats report from Skyline filepath\", header = TRUE, sep = ", deparse1(input$sep_skylinedata),", stringsAsFactors=F)\n", sep = "")
 
       codes = paste(codes, "annot_file = read.csv(\"insert your annotation filepath\")\n"
                     , sep = "")
@@ -991,7 +991,7 @@ library(MSstatsPTM)\n", sep = "")
     else if(input$filetype == 'prog') {
       cat(file=stderr(), "Reached in prog\n")
 
-      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")
+      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data),")
                        annot_file = read.csv(\"insert your annotation filepath\")\n"
                     , sep = "")
 
@@ -1019,7 +1019,7 @@ library(MSstatsPTM)\n", sep = "")
 
       }
       else{
-        codes = paste(codes, "data = read.delim(\"insert your quantification dataset filepath\",sep=",input$sep_data,")\nannot_file = read.csv(\"insert your annotation filepath\")\n"
+        codes = paste(codes, "data = read.delim(\"insert your quantification dataset filepath\",sep=", deparse1(input$sep_data),")\nannot_file = read.csv(\"insert your annotation filepath\")\n"
                       , sep = "")
 
         codes = paste(codes, "data = PDtoMSstatsFormat(data,
@@ -1034,11 +1034,11 @@ library(MSstatsPTM)\n", sep = "")
     }
     else if(input$filetype == 'spec') {
 
-      codes = paste(codes, "data = read.csv(\"insert your MSstats scheme output from Spectronaut filepath\", header = TRUE, sep = ",input$sep_specdata,")\nannot_file = read.csv(\"insert your annotation filepath\", sep='\t')#Optional\n"
+      codes = paste(codes, "data = read.csv(\"insert your MSstats scheme output from Spectronaut filepath\", header = TRUE, sep = ", deparse1(input$sep_specdata),")\nannot_file = read.csv(\"insert your annotation filepath\", sep='\t')#Optional\n"
                     , sep = "")
 
       codes = paste(codes, "data = SpectronauttoMSstatsFormat(data,
-                                       annotation = annot_file #Optional,
+                                       annotation = annot_file, #Optional
                                        filter_with_Qvalue = TRUE, ## same as default
                                        qvalue_cutoff = 0.01, ## same as default
                                        fewMeasurements=\"remove\",
@@ -1092,7 +1092,7 @@ library(MSstatsPTM)\n", sep = "")
     }
     else if(input$filetype == 'open') {
 
-      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")\nannot_file = read.csv(\"insert your annotation filepath\")\n"
+      codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data),")\nannot_file = read.csv(\"insert your annotation filepath\")\n"
                     , sep = "")
 
       codes = paste(codes, "data = OpenSWATHtoMSstatsFormat(data,
@@ -1113,7 +1113,7 @@ library(MSstatsPTM)\n", sep = "")
       }
       else{
 
-        codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ",input$sep_data,")\nunique(data[, c('Run', 'BioReplicate', 'Condition')])\ndata = OpenMStoMSstatsFormat(data, removeProtein_with1Feature=TRUE, use_log_file = FALSE)\n"
+        codes = paste(codes, "data = read.csv(\"insert your quantification dataset filepath\", header = TRUE, sep = ", deparse1(input$sep_data),")\nunique(data[, c('Run', 'BioReplicate', 'Condition')])\ndata = OpenMStoMSstatsFormat(data, removeProtein_with1Feature=TRUE, use_log_file = FALSE)\n"
                       , sep = "")
 
       }

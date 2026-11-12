@@ -231,6 +231,7 @@ qcServer <- function(input, output, session, parent_session, loadpage_input, get
   summarization <- eventReactive(input$run, {
     qc_settings <- shiny::reactiveValuesToList(input)
     upload_settings <- shiny::reactiveValuesToList(loadpage_input())
+    if (identical(upload_settings$DDA_DIA, "TMT")) qc_settings$log <- "2"
     raw <- get_data()
     req(raw)
     channels <- NULL

@@ -173,6 +173,8 @@ lf_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator =
 #'                                                busy_indicator = FALSE)
 #' 
 tmt_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator = TRUE){
+  # TMT is always log2, independent of hidden label-free UI settings.
+  qc_input$log <- "2"
   MBimpute = FALSE ## Add option for MBimpute to server..
   MSstatsConvert::MSstatsLogsSettings(FALSE,
                                       pkg_name = "MSstatsTMT")
@@ -285,6 +287,7 @@ tmt_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator 
   preprocessed = MSstatsTMTAP:::MSstatsSummarizationOutputTMT(summarized,
                                                             processed, TRUE,
                                                             qc_input$remove_norm_channel)
+  attr(preprocessed$ProteinLevelData, "MSstatsTMTAbundanceScale") <- "log2"
   if (busy_indicator){
     remove_modal_progress() # remove it when done
   }

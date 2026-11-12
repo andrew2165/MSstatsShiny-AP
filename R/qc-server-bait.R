@@ -172,6 +172,11 @@ bait_panel_server <- function(input, output, session, loadpage_input, summarizat
   qc <- reactive({
     req(input$bait_protein %in% choices())
     result <- summarization()
+    if (is_tmt_protein(result$upload)) {
+      validate(need(identical(attr(result$data$ProteinLevelData,
+                                  "MSstatsTMTAbundanceScale", exact = TRUE), "log2"),
+                    "Bait QC requires a verified log2 TMT summary. Rerun protein summarization."))
+    }
     if (is_lf_protein(result$upload)) {
       validate(need(identical(as.numeric(result$qc$log), 2),
                     "Bait QC requires log2 input. Select log base 2 and rerun protein summarization."))
@@ -188,6 +193,11 @@ bait_panel_server <- function(input, output, session, loadpage_input, summarizat
     settings <- tmt_bait_settings(input)
     if (!settings$enabled) return(NULL)
     summary <- summarization()
+    if (is_tmt_protein(summary$upload) &&
+        !identical(attr(summary$data$ProteinLevelData,
+                        "MSstatsTMTAbundanceScale", exact = TRUE), "log2")) {
+      return(list(error = "Bait normalization requires a verified log2 TMT summary. Rerun protein summarization."))
+    }
     if (is_lf_protein(summary$upload) && !identical(as.numeric(summary$qc$log), 2)) {
       return(list(error = "Bait normalization requires log2 input. Select log base 2 and rerun protein summarization."))
     }

@@ -57,6 +57,11 @@ Missing bait stops comparison by default. Explicitly choosing **Drop affected
 samples** removes all client rows for those samples and shows the dropped samples
 and remaining condition/replicate coverage. Check that coverage before interpreting
 contrasts. Label-free normalization requires log base 2 and single-label data.
+TMT summarization always uses log2, including after switching from a label-free
+analysis using log10. Rerun protein summarization after updating this fork;
+previous TMT summaries without verified scale metadata cannot be used for bait QC
+or normalization. Existing potentially mis-scaled summaries must be regenerated
+from the input data.
 
 Label-free **Summary variance weights** defaults to **Ignore summary weights**.
 **Propagate client + bait variance** requires finite nonnegative summary variances

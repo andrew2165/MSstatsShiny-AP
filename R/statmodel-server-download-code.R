@@ -150,6 +150,7 @@ generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app
 }
 
 generate_tmt_protein_code <- function(qc_input, loadpage_input, comp_mat, input, bait) {
+  qc_input$log <- "2"
   literal <- function(value) paste(deparse(value), collapse = "\n")
   qc_fields <- c("summarization", "global_norm", "reference_norm", "remove_norm_channel",
                  "null", "null1", "maxQC1", "norm", "log", "names", "features_used",
