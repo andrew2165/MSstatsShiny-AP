@@ -482,7 +482,7 @@ qcServer <- function(input, output, session, parent_session, loadpage_input, get
       req(get_data())
       req(input$quality_metric)
       req(input$qm_protein != "")
-      return(MSstats::MSstatsQualityMetricsPlot(
+      return(MSstatsAP::MSstatsQualityMetricsPlot(
         get_data(),
         metric        = input$quality_metric,
         which.Protein = input$qm_protein,

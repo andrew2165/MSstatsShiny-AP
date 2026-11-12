@@ -31,7 +31,7 @@ create_custom_styles <- function() {
              NAMESPACE_STATMODEL$visualization_download_plot_results, 
              '{background-color:orange}')
     )),
-    tags$link(rel = "stylesheet", type = "text/css", href = "assets/style.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "msstats-ap-assets/style.css")
   )
 }
 

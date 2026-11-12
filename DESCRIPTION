@@ -1,9 +1,9 @@
-Package: MSstatsShiny
+Package: MSstatsShinyAP
 Type: Package
-Title: MSstats GUI for Statistical Anaylsis of Proteomics Experiments
+Title: MSstatsAP GUI for Statistical Anaylsis of Proteomics Experiments
 Version: 1.14.0
-Description: MSstatsShiny is an R-Shiny graphical user interface (GUI) 
-  integrated with the R packages MSstats, MSstatsTMT, and MSstatsPTM. It 
+Description: MSstatsShinyAP is an R-Shiny graphical user interface (GUI)
+  integrated with the R packages MSstatsAP, MSstatsTMTAP, and MSstatsPTM. It
   provides a point and click end-to-end analysis pipeline applicable to a wide 
   variety of experimental designs. These include data-dependedent acquisitions (DDA)
   which are label-free or tandem mass tag (TMT)-based, as well as DIA, SRM, and 
@@ -25,7 +25,7 @@ Authors@R: c(
 License: Artistic-2.0
 Depends: R (>= 4.2)
 Imports: shiny (>= 1.5.0), shinyBS, shinyjs, shinybusy, dplyr, ggplot2, plotly, data.table, Hmisc, shinyFiles,
-  MSstats,MSstatsBig, MSstatsTMT, MSstatsPTM, MSstatsConvert, gplots, marray, DT, readxl,
+  MSstatsAP,MSstatsBig, MSstatsTMTAP, MSstatsPTM, MSstatsConvert, gplots, marray, DT, readxl,
   ggrepel, uuid, utils, stats, htmltools, methods, tidyr, grDevices, graphics, mockery, MSstatsBioNet,
   shinydashboard, arrow, tools, MSstatsResponse, stringr, httr
 Suggests: 
@@ -39,8 +39,10 @@ VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Proteomics, Software, ShinyApps,
   DifferentialExpression, OneChannel, TwoChannel, Normalization, QualityControl,
   GUI
-BugReports: https://github.com/Vitek-Lab/MSstatsShiny/issues
+BugReports: https://github.com/andrew2165/MSstatsShiny-AP/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Config/testthat/edition: 3
+Remotes: andrew2165/MSstats-AP@bait-normalization-release-3.23,
+    andrew2165/MSstatsTMT-AP@backport/bait-normalization-3.23

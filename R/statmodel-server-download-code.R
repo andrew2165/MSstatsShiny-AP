@@ -112,7 +112,7 @@ generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app
   
   if (loadpage_input$DDA_DIA == "TMT") {
     codes = paste(codes, "\n# Model-based comparison\n", sep = "")
-    codes = paste(codes, "model = MSstatsTMT::groupComparisonTMT(summarized,
+    codes = paste(codes, "model = MSstatsTMTAP::groupComparisonTMT(summarized,
                        contrast.matrix = contrast.matrix,
                        moderated = ", input[[NAMESPACE_STATMODEL$modeling_tmt_moderation]], ",\t\t\t\t
                        adj.method = \"BH\",
@@ -129,7 +129,7 @@ generate_analysis_code = function(qc_input, loadpage_input, comp_mat, input, app
                       contrast.matrix = contrast.matrix)\n", sep = "")
   } else {
     codes = paste(codes, "\n# Model-based comparison\n", sep = "")
-    codes = paste(codes, "model = MSstats::groupComparison(contrast.matrix, summarized)\n", sep = "")
+    codes = paste(codes, "model = MSstatsAP::groupComparison(contrast.matrix, summarized)\n", sep = "")
   }
   
   if (loadpage_input$BIO == "PTM") {
@@ -156,16 +156,16 @@ generate_tmt_protein_code <- function(qc_input, loadpage_input, comp_mat, input,
                  "n_feat", "summaryMethod", "MBi", "censInt", "remove50")
   moderation <- NAMESPACE_STATMODEL$modeling_tmt_moderation
   moderated <- isTRUE(as.logical(input[[moderation]]))
-  sha <- utils::packageDescription("MSstatsTMT")$RemoteSha
+  sha <- utils::packageDescription("MSstatsTMTAP")$RemoteSha
 
   codes <- paste0(
     getDataCode(loadpage_input),
     "\n# Summarize with the same settings and function used in MSstatsShiny.\n",
     "qc_settings = ", literal(qc_input[intersect(qc_fields, names(qc_input))]), "\n",
-    "summarized = MSstatsShiny::tmt_summarization_loop(\n",
+    "summarized = MSstatsShinyAP::tmt_summarization_loop(\n",
     "  data, qc_settings, list(DDA_DIA = \"TMT\"), busy_indicator = FALSE\n)\n",
     "\n# Optional original protein intensity plot\n",
-    "# MSstatsTMT::dataProcessPlotsTMT(summarized, type = \"QCPlot\")\n",
+    "# MSstatsTMTAP::dataProcessPlotsTMT(summarized, type = \"QCPlot\")\n",
     "\ncontrast.matrix = ", literal(comp_mat), "\n",
     "\nbait_protein = ", literal(bait$protein), "\n",
     "missing_bait = ", literal(bait$policy), "\n"
@@ -174,16 +174,16 @@ generate_tmt_protein_code <- function(qc_input, loadpage_input, comp_mat, input,
     return(paste0(
       codes,
       if (length(sha)) paste0("# MSstatsTMT source SHA ", sha, "\n"),
-      "comparison_data = MSstatsTMT::normalizeToBaitTMT(\n",
+      "comparison_data = MSstatsTMTAP::normalizeToBaitTMT(\n",
       "  summarized, bait = bait_protein, missing_bait = missing_bait\n)\n",
       "bait_audit = attr(comparison_data, \"BaitNormalization\")\n",
-      "model = MSstatsTMT::groupComparisonTMT(\n",
+      "model = MSstatsTMTAP::groupComparisonTMT(\n",
       "  comparison_data, contrast.matrix = contrast.matrix, moderated = ", moderated, ",\n",
       "  save_fitted_models = TRUE, use_log_file = FALSE, verbose = FALSE\n)\n"
     ))
   }
   paste0(codes, "comparison_data = summarized\n",
-         "model = MSstatsShiny::tmt_model(\n",
+         "model = MSstatsShinyAP::tmt_model(\n",
          "  comparison_data, ", literal(stats::setNames(list(moderated), moderation)),
          ", contrast.matrix, busy_indicator = FALSE\n)\n")
 }
@@ -195,21 +195,21 @@ generate_lf_protein_code <- function(qc_input, loadpage_input, comp_mat, bait) {
   codes <- paste0(getDataCode(loadpage_input),
     "\n# Reproduce the original summary used by MSstatsShiny; retain it for QC.\n",
     "qc_settings = ", literal(qc_input[intersect(fields, names(qc_input))]), "\n",
-    "summarized = MSstatsShiny::lf_summarization_loop(\n",
+    "summarized = MSstatsShinyAP::lf_summarization_loop(\n",
     "  data, qc_settings, list(BIO = \"Protein\", DDA_DIA = \"LType\"), busy_indicator = FALSE\n)\n",
-    "# MSstats::dataProcessPlots(summarized, type = \"QCPlot\")\n",
+    "# MSstatsAP::dataProcessPlots(summarized, type = \"QCPlot\")\n",
     "contrast.matrix = ", literal(comp_mat), "\n",
     "bait_protein = ", literal(bait$protein), "\n",
     "missing_bait = ", literal(bait$policy), "\n",
     "variance_method = ", literal(bait$variance_method), "\n")
   if (isTRUE(bait$enabled)) {
     codes <- paste0(codes,
-      "comparison_data = MSstats::normalizeToBait(\n",
+      "comparison_data = MSstatsAP::normalizeToBait(\n",
       "  summarized, bait = bait_protein, missing_bait = missing_bait,\n",
       "  variance_method = variance_method\n)\n",
       "bait_audit = attr(comparison_data, \"BaitNormalization\")\n")
   } else codes <- paste0(codes, "comparison_data = summarized\n")
-  paste0(codes, "model = MSstats::groupComparison(\n",
+  paste0(codes, "model = MSstatsAP::groupComparison(\n",
     "  contrast.matrix = contrast.matrix, data = comparison_data,\n",
     "  use_log_file = FALSE, verbose = FALSE\n)\n")
 }

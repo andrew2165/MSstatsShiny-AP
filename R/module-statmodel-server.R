@@ -392,7 +392,7 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
             }
             matrix <- bait_contrast_matrix(result$data, matrix)
             model <- if (is_lf_protein(summary$upload)) {
-              MSstats::groupComparison(contrast.matrix = matrix, data = result$data,
+              MSstatsAP::groupComparison(contrast.matrix = matrix, data = result$data,
                                        use_log_file = FALSE, verbose = FALSE)
             } else group_compare_bait_tmt(
               result$data, matrix, isTRUE(as.logical(input[[NAMESPACE_STATMODEL$modeling_tmt_moderation]]))
@@ -400,7 +400,7 @@ statmodelServer = function(id, parent_session, loadpage_input, qc_input,
           } else {
             shiny::removeNotification("bait-comparison")
             model <- if (is_lf_protein(summary$upload)) {
-              MSstats::groupComparison(contrast.matrix = matrix, data = summary$data,
+              MSstatsAP::groupComparison(contrast.matrix = matrix, data = summary$data,
                                        use_log_file = FALSE, verbose = FALSE)
             } else tmt_model(summary$data, input, matrix)
           }

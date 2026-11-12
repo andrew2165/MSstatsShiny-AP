@@ -1,6 +1,6 @@
 # Helper function to create a test UI
 create_test_ui <- function() {
-  MSstatsShiny::statmodelUI("statmodel")
+  MSstatsShinyAP::statmodelUI("statmodel")
 }
 
 # ============================================================================
@@ -217,17 +217,17 @@ test_that("Informative messages are present", {
 # ============================================================================
 
 test_that("Response curve ratio scale checkbox is present in response curve options", {
-  ui <- MSstatsShiny:::create_response_curve_options(shiny::NS("test"))
+  ui <- MSstatsShinyAP:::create_response_curve_options(shiny::NS("test"))
   ui_html <- htmltools::renderTags(ui)$html
   
   expect_true(grepl("Use ratio scale", ui_html),
               info = "Ratio scale checkbox label should be present")
-  expect_true(grepl(MSstatsShiny:::NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale, ui_html),
+  expect_true(grepl(MSstatsShinyAP:::NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale, ui_html),
               info = "Ratio scale checkbox input ID should be present")
 })
 
 test_that("Response curve ratio scale checkbox has tooltip", {
-  ui <- MSstatsShiny:::create_response_curve_options(shiny::NS("test"))
+  ui <- MSstatsShinyAP:::create_response_curve_options(shiny::NS("test"))
   ui_html <- htmltools::renderTags(ui)$html
   
   expect_true(grepl("icon-tooltip", ui_html),
@@ -241,12 +241,12 @@ test_that("Response curve ratio scale checkbox has tooltip", {
 })
 
 test_that("Response curve ratio scale checkbox is checked by default", {
-  ui <- MSstatsShiny:::create_response_curve_options(shiny::NS("test"))
+  ui <- MSstatsShinyAP:::create_response_curve_options(shiny::NS("test"))
   ui_html <- htmltools::renderTags(ui)$html
   
   # Check for the value = TRUE in the checkbox definition
   ratio_scale_id <- paste0("test-",
-    MSstatsShiny:::NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale)
+    MSstatsShinyAP:::NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale)
   expect_true(
     grepl(
       paste0('id="', ratio_scale_id, '"[^>]*checked|checked[^>]*id="', ratio_scale_id, '"'),

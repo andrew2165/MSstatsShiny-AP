@@ -1,13 +1,13 @@
 .onLoad <- function(libname, pkgname) {
   shiny::addResourcePath(
-    prefix = "assets",
+    prefix = "msstats-ap-assets",
     directoryPath = system.file(
       "assets",
-      package = "MSstatsShiny"
+      package = "MSstatsShinyAP"
     )
   )
 }
 
 .onUnload <- function(libname, pkgname) {
-  shiny::removeResourcePath("assets")
+  shiny::removeResourcePath("msstats-ap-assets")
 }

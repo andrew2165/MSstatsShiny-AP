@@ -472,7 +472,7 @@ test_that("dda pd", {
     mock_input$data$datapath <- system.file("tinytest/raw_data/PD/pd_input.csv",
                                             package = "MSstatsConvert")
     
-    stub(getData,"getAnnot",data.table::fread(system.file("tinytest/annotations/annot_pd.csv", package = "MSstats")))
+    stub(getData,"getAnnot",data.table::fread(system.file("tinytest/annotations/annot_pd.csv", package = "MSstatsAP")))
     
     output <- getData(mock_input)
     expected_names <- c("ProteinName","PeptideSequence","PrecursorCharge","FragmentIon","ProductCharge","IsotopeLabelType","Condition","BioReplicate","Run","Fraction","Intensity")
@@ -624,7 +624,7 @@ test_that("dia diaumpire", {
     stub(getData,"getProtSummary",data.table::fread(system.file("tinytest/raw_data/DIAUmpire/dia_prot.csv",
                                                                 package = "MSstatsConvert")))
     stub(getData,"getAnnot2",data.table::fread(system.file("tinytest/annotations/annot_diau.csv",
-                                                           package = "MSstats")))
+                                                           package = "MSstatsAP")))
     
     output <- getData(mock_input)
     expected_names <- c("ProteinName","PeptideSequence","PrecursorCharge","FragmentIon","ProductCharge","IsotopeLabelType","Condition","BioReplicate","Run","Fraction","Intensity")
@@ -659,7 +659,7 @@ test_that("dia openswath", {
     mock_input$sep = "\t"
     
     stub(getData,"getAnnot",data.table::fread(system.file("tinytest/annotations/annot_os.csv",
-                                                          package = "MSstats")))
+                                                          package = "MSstatsAP")))
     stub(getData,"read.csv",data.table::fread(system.file("tinytest/raw_data/OpenSWATH/openswath_input.csv",
                                                           package = "MSstatsConvert")))
     output <- getData(mock_input)
@@ -676,11 +676,11 @@ test_that("tmt maxquant", {
     mock_input$filetype = "maxq"
     
     load(system.file("data/evidence.rda",
-                     package = "MSstatsShiny"))
+                     package = "MSstatsShinyAP"))
     load(system.file("data/proteinGroups.rda",
-                     package = "MSstatsShiny"))
+                     package = "MSstatsShinyAP"))
     load(system.file("data/annotation.mq.rda",
-                     package = "MSstatsShiny"))
+                     package = "MSstatsShinyAP"))
     stub(getData,"getEvidence",evidence)
     stub(getData,"getProteinGroups",proteinGroups)
     stub(getData,"getAnnot1",annotation.mq)
@@ -700,7 +700,7 @@ test_that("tmt openms", {
     mock_input$filetype = "openms"
     mock_input$sep = ","
     
-    load(system.file("data/raw.om.rda", package = "MSstatsShiny"))
+    load(system.file("data/raw.om.rda", package = "MSstatsShinyAP"))
     stub(getData,"read.csv",raw.om)
     
     output <- getData(mock_input)
@@ -717,9 +717,9 @@ test_that("tmt spectromine", {
     mock_input$filetype = "spmin"
     
     load(system.file("data/raw.mine.rda",
-                     package = "MSstatsShiny"))
+                     package = "MSstatsShinyAP"))
     load(system.file("data/annotation.mine.rda",
-                     package = "MSstatsShiny"))
+                     package = "MSstatsShinyAP"))
     stub(getData,"read.csv",raw.mine)
     stub(getData,"getAnnot",annotation.mine)
     
@@ -1065,13 +1065,13 @@ test_that("preprocessData QC, PTM and PTMTMT: No", {
 
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::lf_summarization_loop",
+      what = "MSstatsShinyAP::lf_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "qc_input", mock_input,depth=2);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "qc_input", mock_input,depth=2);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_summarization_loop(...)})
 
     output <- preprocessData(mock_input,mock_input,getData(mock_input))
     expected_names <- c("PTM","PROTEIN")
@@ -1096,13 +1096,13 @@ test_that("preprocessData QC, PTM and PTMTMT: Yes", {
 
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::tmt_summarization_loop",
+      what = "MSstatsShinyAP::tmt_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "qc_input", mock_input,depth=2);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::tmt_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "qc_input", mock_input,depth=2);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::tmt_summarization_loop(...)})
 
     output <- preprocessData(mock_input,mock_input,getData(mock_input))
     expected_names <- c("PTM","PROTEIN")
@@ -1125,13 +1125,13 @@ test_that("preprocessData QC, PTM and PTMTMT: Yes", {
 # 
 #     mockery::stub(
 #       where = preprocessData,
-#       what = "MSstatsShiny::tmt_summarization_loop",
+#       what = "MSstatsShinyAP::tmt_summarization_loop",
 #       how = function(...){
-#         # mockery::stub(MSstatsShiny::tmt_summarization_loop, "qc_input", mock_input,depth=2);
-#         mockery::stub(MSstatsShiny::tmt_summarization_loop, "show_modal_progress_line", NULL);
-#         mockery::stub(MSstatsShiny::tmt_summarization_loop, "update_modal_progress", NULL);
-#         mockery::stub(MSstatsShiny::tmt_summarization_loop, "remove_modal_progress", NULL);
-#         MSstatsShiny::tmt_summarization_loop(...)})
+#         # mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "qc_input", mock_input,depth=2);
+#         mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "show_modal_progress_line", NULL);
+#         mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "update_modal_progress", NULL);
+#         mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "remove_modal_progress", NULL);
+#         MSstatsShinyAP::tmt_summarization_loop(...)})
 # 
 #     output <- preprocessData(mock_input,mock_input)
 #     expected_names <- c("FeatureLevelData","ProteinLevelData")
@@ -1157,13 +1157,13 @@ test_that("preprocessData QC Other", {
 
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::lf_summarization_loop",
+      what = "MSstatsShinyAP::lf_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "MSstatsShiny::qc_input", mock_input);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "MSstatsShinyAP::qc_input", mock_input);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_summarization_loop(...)})
 
     output <- preprocessData(mock_input,mock_input,getData(mock_input))
     expected_names <- c("FeatureLevelData","ProteinLevelData","SummaryMethod")
@@ -1241,22 +1241,22 @@ test_that("dataComparison statmodel PTM PTMTMT: Yes", {
 
     mockery::stub(
         where = dataComparison,
-        what = "MSstatsShiny::tmt_model",
+        what = "MSstatsShinyAP::tmt_model",
         how = function(...){
-          mockery::stub(MSstatsShiny::tmt_model, "show_modal_progress_line", NULL);
-          mockery::stub(MSstatsShiny::tmt_model, "update_modal_progress", NULL);
-          mockery::stub(MSstatsShiny::tmt_model, "remove_modal_progress", NULL);
-          MSstatsShiny::tmt_model(...)})
+          mockery::stub(MSstatsShinyAP::tmt_model, "show_modal_progress_line", NULL);
+          mockery::stub(MSstatsShinyAP::tmt_model, "update_modal_progress", NULL);
+          mockery::stub(MSstatsShinyAP::tmt_model, "remove_modal_progress", NULL);
+          MSstatsShinyAP::tmt_model(...)})
     
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::tmt_summarization_loop",
+      what = "MSstatsShinyAP::tmt_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "qc_input", mock_input,depth=2);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::tmt_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::tmt_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "qc_input", mock_input,depth=2);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::tmt_summarization_loop(...)})
 
     output <- dataComparison(mock_input,mock_input,mock_input,dummy_matrix,preprocessData(mock_input,mock_input,getData(mock_input)))
     expected_names <- c("PTM.Model","PROTEIN.Model","ADJUSTED.Model")
@@ -1290,22 +1290,22 @@ test_that("dataComparison statmodel PTM PTMTMT: No", {
     
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::lf_summarization_loop",
+      what = "MSstatsShinyAP::lf_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "qc_input", mock_input,depth=2);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "qc_input", mock_input,depth=2);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_summarization_loop(...)})
 
     mockery::stub(
       where = dataComparison,
-      what = "MSstatsShiny::lf_model",
+      what = "MSstatsShinyAP::lf_model",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_model, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_model, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_model, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_model(...)})
+        mockery::stub(MSstatsShinyAP::lf_model, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_model, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_model, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_model(...)})
 
     output <- dataComparison(mock_input,mock_input,mock_input,dummy_matrix,preprocessData(mock_input,mock_input,getData(mock_input)))
     expected_names <- c("PTM.Model","PROTEIN.Model","ADJUSTED.Model")
@@ -1345,22 +1345,22 @@ test_that("dataComparison statmodel PTM PTMTMT: No", {
 #         mockery::stub(where=preprocessData, what="getData", how=function(...){
 #           mockery::stub(getData, "remove_modal_spinner", NULL);
 #           getData(...)});
-#         mockery::stub(where=preprocessData, what="MSstatsShiny::tmt_summarization_loop", how=function(...){
-#           mockery::stub(MSstatsShiny::tmt_summarization_loop, "remove_modal_progress", NULL);
-#           mockery::stub(MSstatsShiny::tmt_summarization_loop, "show_modal_progress_line", NULL);
-#           mockery::stub(MSstatsShiny::tmt_summarization_loop, "qc_input", mock_input);
-#           MSstatsShiny::tmt_summarization_loop(...)});
+#         mockery::stub(where=preprocessData, what="MSstatsShinyAP::tmt_summarization_loop", how=function(...){
+#           mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "remove_modal_progress", NULL);
+#           mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "show_modal_progress_line", NULL);
+#           mockery::stub(MSstatsShinyAP::tmt_summarization_loop, "qc_input", mock_input);
+#           MSstatsShinyAP::tmt_summarization_loop(...)});
 #         preprocessData(...)})
 # 
 #     mockery::stub(
 #         where = dataComparison,
-#         what = "MSstatsShiny::tmt_model",
+#         what = "MSstatsShinyAP::tmt_model",
 #         how = function(...){
-#           mockery::stub(MSstatsShiny::tmt_model, "show_modal_progress_line", NULL);
-#           mockery::stub(MSstatsShiny::tmt_model, "update_modal_progress", NULL);
-#           mockery::stub(MSstatsShiny::tmt_model, "remove_modal_progress", NULL);
-#           mockery::stub(MSstatsShiny::tmt_model, "input", mock_input);
-#           MSstatsShiny::tmt_model(...)})
+#           mockery::stub(MSstatsShinyAP::tmt_model, "show_modal_progress_line", NULL);
+#           mockery::stub(MSstatsShinyAP::tmt_model, "update_modal_progress", NULL);
+#           mockery::stub(MSstatsShinyAP::tmt_model, "remove_modal_progress", NULL);
+#           mockery::stub(MSstatsShinyAP::tmt_model, "input", mock_input);
+#           MSstatsShinyAP::tmt_model(...)})
 # 
 #     output <- dataComparison(mock_input,mock_input,mock_input,dummy_matrix)
 #     expected_names <- c("ComparisonResult","ModelQC","FittedModel")
@@ -1394,22 +1394,22 @@ test_that("dataComparison statmodel Other", {
 
     mockery::stub(
       where = dataComparison,
-      what = "MSstatsShiny::lf_model",
+      what = "MSstatsShinyAP::lf_model",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_model, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_model, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_model, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_model(...)})
+        mockery::stub(MSstatsShinyAP::lf_model, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_model, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_model, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_model(...)})
     
     mockery::stub(
       where = preprocessData,
-      what = "MSstatsShiny::lf_summarization_loop",
+      what = "MSstatsShinyAP::lf_summarization_loop",
       how = function(...){
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "qc_input", mock_input,depth=2);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "show_modal_progress_line", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "update_modal_progress", NULL);
-        mockery::stub(MSstatsShiny::lf_summarization_loop, "remove_modal_progress", NULL);
-        MSstatsShiny::lf_summarization_loop(...)})
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "qc_input", mock_input,depth=2);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "show_modal_progress_line", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "update_modal_progress", NULL);
+        mockery::stub(MSstatsShinyAP::lf_summarization_loop, "remove_modal_progress", NULL);
+        MSstatsShinyAP::lf_summarization_loop(...)})
 
     output <- dataComparison(mock_input,mock_input,mock_input,dummy_matrix,preprocessData(mock_input,mock_input,getData(mock_input)))
     expected_names <- c("ComparisonResult","ModelQC","FittedModel")
@@ -1598,7 +1598,7 @@ describe("getData for Big Spectronaut", {
 # ============================================================================
 
 test_that("resolve_mod_id uses dropdown selection and escapes brackets", {
-  result <- MSstatsShiny:::.resolve_mod_id(
+  result <- MSstatsShinyAP:::.resolve_mod_id(
     selected = "[Common Fixed:Carbamidomethyl on C]",
     custom = NULL
   )
@@ -1606,7 +1606,7 @@ test_that("resolve_mod_id uses dropdown selection and escapes brackets", {
 })
 
 test_that("resolve_mod_id uses custom input when Other is selected", {
-  result <- MSstatsShiny:::.resolve_mod_id(
+  result <- MSstatsShinyAP:::.resolve_mod_id(
     selected = "__other__",
     custom = "[My Custom Mod]"
   )
@@ -1614,7 +1614,7 @@ test_that("resolve_mod_id uses custom input when Other is selected", {
 })
 
 test_that("resolve_mod_id preserves already-escaped custom input", {
-  result <- MSstatsShiny:::.resolve_mod_id(
+  result <- MSstatsShinyAP:::.resolve_mod_id(
     selected = "__other__",
     custom = "\\[Already Escaped\\]"
   )
@@ -1622,7 +1622,7 @@ test_that("resolve_mod_id preserves already-escaped custom input", {
 })
 
 test_that("resolve_mod_id fixes partially escaped custom input", {
-  result <- MSstatsShiny:::.resolve_mod_id(
+  result <- MSstatsShinyAP:::.resolve_mod_id(
     selected = "__other__",
     custom = "\\[Phospho]"
   )
@@ -1630,12 +1630,12 @@ test_that("resolve_mod_id fixes partially escaped custom input", {
 })
 
 test_that("resolve_mod_id errors when both inputs are NULL", {
-  expect_error(MSstatsShiny:::.resolve_mod_id(NULL, NULL),
+  expect_error(MSstatsShinyAP:::.resolve_mod_id(NULL, NULL),
                "No modification ID selected")
 })
 
 test_that("resolve_mod_id errors when custom is empty string", {
-  expect_error(MSstatsShiny:::.resolve_mod_id("__other__", ""),
+  expect_error(MSstatsShinyAP:::.resolve_mod_id("__other__", ""),
                "No modification ID selected")
 })
 
@@ -1647,7 +1647,7 @@ test_that("extract_mod_ids_from_preview handles consecutive modifications", {
     check.names = FALSE
   )
 
-  result <- MSstatsShiny:::.extract_mod_ids_from_preview(preview)
+  result <- MSstatsShinyAP:::.extract_mod_ids_from_preview(preview)
   expect_equal(length(result), 3)
   expect_true(all(c("[Mod1]", "[Mod2]", "[Mod3]") %in% result))
 })
@@ -1665,7 +1665,7 @@ test_that("is_diann_2plus returns TRUE for DIANN 2.0+ format with numbered fragm
     Fr.2.Quantity = 300,
     Precursor.Charge = 2
   )
-  expect_true(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_true(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 test_that("is_diann_2plus returns FALSE for DIANN 1.x format with legacy Fragment.Quant.Corrected", {
@@ -1676,7 +1676,7 @@ test_that("is_diann_2plus returns FALSE for DIANN 1.x format with legacy Fragmen
     Fragment.Quant.Raw = 95,
     Precursor.Charge = 2
   )
-  expect_false(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 test_that("is_diann_2plus returns FALSE for DIANN 1.x format with FragmentQuantCorrected (no dots)", {
@@ -1685,7 +1685,7 @@ test_that("is_diann_2plus returns FALSE for DIANN 1.x format with FragmentQuantC
     FragmentQuantCorrected = 100,
     Precursor.Charge = 2
   )
-  expect_false(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 test_that("is_diann_2plus returns FALSE when both formats are present (legacy takes precedence)", {
@@ -1694,15 +1694,15 @@ test_that("is_diann_2plus returns FALSE when both formats are present (legacy ta
     Fragment.Quant.Corrected = 100,
     Fr.0.Quantity = 200
   )
-  expect_false(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 test_that("is_diann_2plus returns FALSE for NULL preview", {
-  expect_false(MSstatsShiny:::.is_diann_2plus(NULL))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(NULL))
 })
 
 test_that("is_diann_2plus returns FALSE for empty data frame", {
-  expect_false(MSstatsShiny:::.is_diann_2plus(data.frame()))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(data.frame()))
 })
 
 test_that("is_diann_2plus returns FALSE for data with no fragment columns", {
@@ -1711,7 +1711,7 @@ test_that("is_diann_2plus returns FALSE for data with no fragment columns", {
     Protein.Group = "P1",
     Precursor.Charge = 2
   )
-  expect_false(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 test_that("is_diann_2plus detects DIANN 2.0+ with many numbered fragment columns", {
@@ -1722,7 +1722,7 @@ test_that("is_diann_2plus detects DIANN 2.0+ with many numbered fragment columns
     lapply(cols, function(x) if (grepl("Quantity", x)) runif(1) else "x"),
     cols
   ))
-  expect_true(MSstatsShiny:::.is_diann_2plus(preview))
+  expect_true(MSstatsShinyAP:::.is_diann_2plus(preview))
 })
 
 # ============================================================================
@@ -1734,7 +1734,7 @@ test_that("read_preview reads CSV files with nrows limit", {
   df <- data.frame(a = 1:200, b = letters[1:26][1:200 %% 26 + 1])
   write.csv(df, tmp, row.names = FALSE)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "test.csv", nrows = 100)
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "test.csv", nrows = 100)
   expect_false(is.null(preview))
   expect_equal(nrow(preview), 100)
   expect_true(all(c("a", "b") %in% names(preview)))
@@ -1747,7 +1747,7 @@ test_that("read_preview reads TSV files", {
   df <- data.frame(a = 1:50, b = letters[1:50 %% 26 + 1])
   write.table(df, tmp, sep = "\t", row.names = FALSE, quote = FALSE)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "test.tsv", nrows = 100)
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "test.tsv", nrows = 100)
   expect_false(is.null(preview))
   expect_equal(nrow(preview), 50)
 
@@ -1755,14 +1755,14 @@ test_that("read_preview reads TSV files", {
 })
 
 test_that("read_preview returns NULL for non-existent files", {
-  preview <- MSstatsShiny:::.read_preview("/nonexistent/path.csv", "test.csv")
+  preview <- MSstatsShinyAP:::.read_preview("/nonexistent/path.csv", "test.csv")
   expect_null(preview)
 })
 
 test_that("read_preview returns NULL for malformed files", {
   tmp <- tempfile(fileext = ".csv")
   writeBin(as.raw(c(0xFF, 0xFE, 0x00, 0x00)), tmp)  # Garbage bytes
-  preview <- MSstatsShiny:::.read_preview(tmp, "test.csv")
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "test.csv")
   # Either NULL or a data frame (fread can sometimes parse garbage) — both acceptable
   expect_true(is.null(preview) || is.data.frame(preview))
   unlink(tmp)
@@ -1774,7 +1774,7 @@ test_that("read_preview handles NULL filename gracefully", {
   write.csv(df, tmp, row.names = FALSE)
 
   # Should default to CSV reading path
-  preview <- MSstatsShiny:::.read_preview(tmp, NULL)
+  preview <- MSstatsShinyAP:::.read_preview(tmp, NULL)
   expect_false(is.null(preview))
   expect_equal(nrow(preview), 10)
 
@@ -1788,7 +1788,7 @@ test_that("read_preview dispatches parquet files to arrow schema reader", {
   df <- data.frame(a = 1:50, b = runif(50))
   arrow::write_parquet(df, tmp)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "test.parquet")
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "test.parquet")
   expect_false(is.null(preview))
   # Schema-only read returns 0 rows but correct column names
   expect_equal(nrow(preview), 0)
@@ -1804,7 +1804,7 @@ test_that("read_preview recognizes .pq extension as parquet", {
   df <- data.frame(a = 1:10)
   arrow::write_parquet(df, tmp)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "test.pq")
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "test.pq")
   expect_false(is.null(preview))
 
   unlink(tmp)
@@ -1826,8 +1826,8 @@ test_that("DIANN 1.x CSV file is correctly detected as not 2.0+", {
   )
   write.csv(df, tmp, row.names = FALSE)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "diann_1x.csv")
-  expect_false(MSstatsShiny:::.is_diann_2plus(preview))
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "diann_1x.csv")
+  expect_false(MSstatsShinyAP:::.is_diann_2plus(preview))
 
   unlink(tmp)
 })
@@ -1850,8 +1850,8 @@ test_that("DIANN 2.0 parquet file is correctly detected as 2.0+", {
   )
   arrow::write_parquet(df, tmp)
 
-  preview <- MSstatsShiny:::.read_preview(tmp, "diann_2plus.parquet")
-  expect_true(MSstatsShiny:::.is_diann_2plus(preview))
+  preview <- MSstatsShinyAP:::.read_preview(tmp, "diann_2plus.parquet")
+  expect_true(MSstatsShinyAP:::.is_diann_2plus(preview))
 
   unlink(tmp)
 })

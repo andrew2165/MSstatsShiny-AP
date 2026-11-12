@@ -1,5 +1,5 @@
 ## Uncomment out these lines to deploy on Shiny Server
-# library(MSstatsShiny)
+# library(MSstatsShinyAP)
 # library(shiny)
 # library(shinyjs)
 
@@ -46,7 +46,7 @@ color: black !important;
 #' 
 uiObject <- function() {
   ui = navbarPage(
-    title = "MSstatsShiny",
+    title = "MSstatsShinyAP",
     id = "tablist",
     selected = currentTab,
 
@@ -63,7 +63,7 @@ uiObject <- function() {
     ),
     inverse = TRUE,
     collapsible = TRUE,
-    windowTitle = "MSstatsShiny"
+    windowTitle = "MSstatsShinyAP"
   )
   return(ui)
 }

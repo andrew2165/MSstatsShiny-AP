@@ -472,7 +472,7 @@ test_that("Metamorpheus PTM upload fields exist in UI", {
 })
 
 test_that("create_meta_mod_id_selector shows dropdown when mods are available", {
-  ui <- MSstatsShiny:::create_meta_mod_id_selector(
+  ui <- MSstatsShinyAP:::create_meta_mod_id_selector(
     shiny::NS("test"),
     c("[Mod A]", "[Mod B]")
   )
@@ -484,7 +484,7 @@ test_that("create_meta_mod_id_selector shows dropdown when mods are available", 
 })
 
 test_that("create_meta_mod_id_selector shows text input when no mods available", {
-  ui <- MSstatsShiny:::create_meta_mod_id_selector(
+  ui <- MSstatsShinyAP:::create_meta_mod_id_selector(
     shiny::NS("test"),
     character(0)
   )

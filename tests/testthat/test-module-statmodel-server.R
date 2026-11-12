@@ -640,7 +640,7 @@ test_that("Ratio scale checkbox input can be toggled", {
 # ============================================================================
 
 test_that("get_download_plot_filename returns ResponseCurvePlot for response curves", {
-  filename <- MSstatsShiny:::get_download_plot_filename(CONSTANTS_STATMODEL$plot_type_response_curve)
+  filename <- MSstatsShinyAP:::get_download_plot_filename(CONSTANTS_STATMODEL$plot_type_response_curve)
   expect_true(grepl("ResponseCurvePlot", filename))
   expect_true(grepl("\\.zip$", filename))
 })
@@ -649,7 +649,7 @@ test_that("get_download_plot_filename returns SummaryPlot for non-response-curve
   for (plot_type in c(CONSTANTS_STATMODEL$plot_type_volcano_plot,
                       CONSTANTS_STATMODEL$plot_type_heatmap,
                       CONSTANTS_STATMODEL$plot_type_comparison_plot)) {
-    filename <- MSstatsShiny:::get_download_plot_filename(plot_type)
+    filename <- MSstatsShinyAP:::get_download_plot_filename(plot_type)
     expect_true(grepl("SummaryPlot", filename),
                 info = paste("Expected SummaryPlot for", plot_type))
     expect_true(grepl("\\.zip$", filename))
@@ -667,7 +667,7 @@ test_that("zip_and_copy_plot creates a valid zip from PDF files", {
   dest_file <- tempfile("download_", fileext = ".zip")
   on.exit(unlink(dest_file), add = TRUE)
 
-  result <- MSstatsShiny:::zip_and_copy_plot(temp_pdf, dest_file)
+  result <- MSstatsShinyAP:::zip_and_copy_plot(temp_pdf, dest_file)
   expect_true(result)
   expect_true(file.exists(dest_file))
   expect_gt(file.size(dest_file), 0)
@@ -679,7 +679,7 @@ test_that("zip_and_copy_plot creates a valid zip from PDF files", {
 
 test_that("zip_and_copy_plot returns FALSE for empty file list", {
   dest_file <- tempfile("download_", fileext = ".zip")
-  fn <- MSstatsShiny:::zip_and_copy_plot
+  fn <- MSstatsShinyAP:::zip_and_copy_plot
   mockery::stub(fn, "showNotification", function(...) NULL)
   result <- fn(character(0), dest_file)
   expect_false(result)
@@ -696,7 +696,7 @@ test_that("zip_and_copy_plot handles multiple PDFs", {
   dest_file <- tempfile("download_", fileext = ".zip")
   on.exit(unlink(dest_file), add = TRUE)
 
-  result <- MSstatsShiny:::zip_and_copy_plot(temp_pdfs, dest_file)
+  result <- MSstatsShinyAP:::zip_and_copy_plot(temp_pdfs, dest_file)
   expect_true(result)
 
   contents <- utils::unzip(dest_file, list = TRUE)

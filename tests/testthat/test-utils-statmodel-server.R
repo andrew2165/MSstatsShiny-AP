@@ -510,7 +510,7 @@ test_that("generate_analysis_code produces groupComparison for standard DDA", {
 
   result = generate_analysis_code(list(), list(DDA_DIA = "DDA", BIO = "Protein"), comp_mat, mock_input)
 
-  expect_true(grepl("MSstats::groupComparison", result))
+  expect_true(grepl("MSstatsAP::groupComparison", result))
   expect_true(grepl("contrast.matrix", result, fixed = TRUE))
   expect_true(grepl("groupComparisonPlots", result))
   expect_false(grepl("doseResponseFit", result))
@@ -559,7 +559,7 @@ test_that("generate_analysis_code produces groupComparisonTMT for TMT", {
 # ============================================================================
 
 test_that("get_modeling_section_header returns dose-response heading for response curve mode", {
-  result <- MSstatsShiny:::get_modeling_section_header(
+  result <- MSstatsShinyAP:::get_modeling_section_header(
     CONSTANTS_STATMODEL$comparison_mode_response_curve
   )
   html <- as.character(result)
@@ -578,7 +578,7 @@ test_that("get_modeling_section_header returns group comparison heading for othe
     CONSTANTS_STATMODEL$comparison_mode_custom_pairwise,
     CONSTANTS_STATMODEL$comparison_mode_custom_nonpairwise
   )) {
-    result <- MSstatsShiny:::get_modeling_section_header(mode)
+    result <- MSstatsShinyAP:::get_modeling_section_header(mode)
     html <- as.character(result)
     expect_true(grepl("Group comparison", html),
                 info = paste("Should show group comparison for mode:", mode))
@@ -588,7 +588,7 @@ test_that("get_modeling_section_header returns group comparison heading for othe
 })
 
 test_that("get_modeling_section_header handles NULL mode", {
-  result <- MSstatsShiny:::get_modeling_section_header(NULL)
+  result <- MSstatsShinyAP:::get_modeling_section_header(NULL)
   html <- as.character(result)
   expect_true(grepl("Group comparison", html),
               info = "NULL mode should default to group comparison")

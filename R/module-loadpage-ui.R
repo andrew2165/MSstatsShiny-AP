@@ -115,7 +115,7 @@ create_css_styling <- function() {
   tags$head(
     tags$style(HTML('#loadpage-proceed1{background-color:orange}')),
     tags$style(HTML('#loadpage-reset1{background-color:orange}')),
-    tags$link(rel = "stylesheet", type = "text/css", href = "assets/style.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "msstats-ap-assets/style.css")
   )
 }
 

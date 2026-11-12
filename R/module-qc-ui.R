@@ -19,7 +19,7 @@ qcUI <- function(id) {
       use_busy_spinner(spin = "fading-circle"),
       tags$head(
         tags$style(HTML('#qc-proceed6{background-color:orange}')),
-        tags$link(rel = "stylesheet", type = "text/css", href = "assets/style.css"),
+        tags$link(rel = "stylesheet", type = "text/css", href = "msstats-ap-assets/style.css"),
       ),
       headerPanel("Process and quantify data"),
       p("Feature summarization and missing value imputation. Includes options for vizualizing summarization through data tables and multiple plots. All outputs are available to download in 'csv' format."),

@@ -30,7 +30,7 @@ test_that("prepare_turnover_for_dose_response returns correct columns", {
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_true(all(c("protein", "drug", "dose", "response") %in% colnames(result)),
               info = "Result should contain required columns")
@@ -46,7 +46,7 @@ test_that("prepare_turnover_for_dose_response maps columns correctly", {
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_equal(result$protein, c("ProtA", "ProtB"))
   expect_equal(result$drug, c("time", "time"))
@@ -62,7 +62,7 @@ test_that("prepare_turnover_for_dose_response drops NA H_frac", {
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_equal(nrow(result), 1,
                info = "Non-NA rows preserved")
@@ -81,7 +81,7 @@ test_that("prepare_turnover_for_dose_response includes BaseSequence when present
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_true("BaseSequence" %in% colnames(result),
               info = "BaseSequence should be included when present in input")
@@ -98,7 +98,7 @@ test_that("prepare_turnover_for_dose_response excludes BaseSequence when absent"
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_false("BaseSequence" %in% colnames(result),
                info = "BaseSequence should not appear when absent from input")
@@ -112,7 +112,7 @@ test_that("prepare_turnover_for_dose_response coerces Protein to character", {
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_type(result$protein, "character")
 })
@@ -125,7 +125,7 @@ test_that("prepare_turnover_for_dose_response coerces TimeVal to numeric dose", 
     stringsAsFactors = FALSE
   )
 
-  result <- MSstatsShiny:::prepare_turnover_for_dose_response(ratios)
+  result <- MSstatsShinyAP:::prepare_turnover_for_dose_response(ratios)
 
   expect_type(result$dose, "double")
   expect_equal(result$dose, 4)
@@ -136,7 +136,7 @@ test_that("prepare_turnover_for_dose_response coerces TimeVal to numeric dose", 
 # ============================================================================
 
 test_that("get_modeling_section_header returns turnover heading for protein_turnover template", {
-  result <- MSstatsShiny:::get_modeling_section_header(
+  result <- MSstatsShinyAP:::get_modeling_section_header(
     CONSTANTS_STATMODEL$comparison_mode_response_curve,
     template = TEMPLATES$protein_turnover
   )
@@ -153,7 +153,7 @@ test_that("get_modeling_section_header returns turnover heading for protein_turn
 })
 
 test_that("get_modeling_section_header returns dose-response heading for chemoproteomics template", {
-  result <- MSstatsShiny:::get_modeling_section_header(
+  result <- MSstatsShinyAP:::get_modeling_section_header(
     CONSTANTS_STATMODEL$comparison_mode_response_curve,
     template = TEMPLATES$chemoproteomics
   )
@@ -166,7 +166,7 @@ test_that("get_modeling_section_header returns dose-response heading for chemopr
 })
 
 test_that("get_modeling_section_header returns dose-response heading for default template", {
-  result <- MSstatsShiny:::get_modeling_section_header(
+  result <- MSstatsShinyAP:::get_modeling_section_header(
     CONSTANTS_STATMODEL$comparison_mode_response_curve,
     template = TEMPLATES$default
   )
@@ -184,7 +184,7 @@ test_that("get_modeling_section_header returns dose-response heading for default
 
 test_that("create_response_curve_options hides ratio scale checkbox for protein_turnover", {
   ns <- NS("test_module")
-  result <- MSstatsShiny:::create_response_curve_options(ns, template = TEMPLATES$protein_turnover)
+  result <- MSstatsShinyAP:::create_response_curve_options(ns, template = TEMPLATES$protein_turnover)
   ui_html <- htmltools::renderTags(result)$html
 
   expect_false(grepl(NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale, ui_html),
@@ -193,7 +193,7 @@ test_that("create_response_curve_options hides ratio scale checkbox for protein_
 
 test_that("create_response_curve_options shows ratio scale checkbox for default template", {
   ns <- NS("test_module")
-  result <- MSstatsShiny:::create_response_curve_options(ns, template = TEMPLATES$default)
+  result <- MSstatsShinyAP:::create_response_curve_options(ns, template = TEMPLATES$default)
   ui_html <- htmltools::renderTags(result)$html
 
   expect_true(grepl(NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale, ui_html),
@@ -202,7 +202,7 @@ test_that("create_response_curve_options shows ratio scale checkbox for default 
 
 test_that("create_response_curve_options shows ratio scale checkbox for chemoproteomics template", {
   ns <- NS("test_module")
-  result <- MSstatsShiny:::create_response_curve_options(ns, template = TEMPLATES$chemoproteomics)
+  result <- MSstatsShinyAP:::create_response_curve_options(ns, template = TEMPLATES$chemoproteomics)
   ui_html <- htmltools::renderTags(result)$html
 
   expect_true(grepl(NAMESPACE_STATMODEL$visualization_response_curve_ratio_scale, ui_html),

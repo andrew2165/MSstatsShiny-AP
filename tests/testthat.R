@@ -8,6 +8,6 @@
 
 library(testthat)
 library(mockery)
-library(MSstatsShiny)
+library(MSstatsShinyAP)
 
-test_check("MSstatsShiny")
+test_check("MSstatsShinyAP")

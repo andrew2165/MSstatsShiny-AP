@@ -35,7 +35,7 @@
 #' @importFrom dplyr `%>%` filter summarise n_distinct group_by ungroup select n mutate case_when bind_rows 
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom MSstatsConvert MSstatsLogsSettings
-#' @importFrom MSstats MSstatsQualityMetricsPlot
+#' @importFrom MSstatsAP MSstatsQualityMetricsPlot
 #' @importFrom MSstatsPTM dataProcessPlotsPTM groupComparisonPlotsPTM MaxQtoMSstatsPTMFormat PDtoMSstatsPTMFormat FragPipetoMSstatsPTMFormat SkylinetoMSstatsPTMFormat MetamorpheusToMSstatsPTMFormat SpectronauttoMSstatsPTMFormat
 #' @importFrom MSstatsBioNet exportNetworkToHTML deleteEdgeFromNetwork
 #' @importFrom MSstatsResponse futureExperimentSimulation run_tpr_simulation plot_tpr_power_curve calculateTurnoverRatios
@@ -47,6 +47,6 @@
 #' @importFrom stringr str_detect str_extract_all str_extract str_trim
 #' @import mockery
 #' 
-#' @name MSstatsShiny
+#' @name MSstatsShinyAP
 #' @keywords internal
 "_PACKAGE"

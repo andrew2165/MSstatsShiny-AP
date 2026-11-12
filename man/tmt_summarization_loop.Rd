@@ -23,10 +23,10 @@ list of TMT summarization results
 Main TMT function to calculate MSstatsShiny results.
 }
 \examples{
-data(raw.pd, package = "MSstatsTMT")
-data(annotation.pd, package = "MSstatsTMT")
+data(raw.pd, package = "MSstatsTMTAP")
+data(annotation.pd, package = "MSstatsTMTAP")
 
-testdata <- MSstatsTMT::PDtoMSstatsTMTFormat(raw.pd, 
+testdata <- MSstatsTMTAP::PDtoMSstatsTMTFormat(raw.pd,
                                              annotation.pd,
                                              use_log_file = FALSE
                                              )

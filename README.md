@@ -1,3 +1,37 @@
+# MSstatsShinyAP personal fork
+
+The GitHub repository is `MSstatsShiny-AP`; the installed R package is
+`MSstatsShinyAP`. R package names cannot contain hyphens. The AP packages install
+alongside the original packages without replacing them. Function names remain
+unchanged; use explicit namespace calls when both versions are attached.
+
+Install the renamed forks in dependency order from their feature branches
+(after these changes have been committed and pushed):
+
+```r
+remotes::install_github("andrew2165/MSstats-AP@bait-normalization-release-3.23")
+remotes::install_github("andrew2165/MSstatsTMT-AP@backport/bait-normalization-3.23")
+remotes::install_github("andrew2165/MSstatsShiny-AP@feature/label-free-bait-normalization")
+
+library(MSstatsAP)
+library(MSstatsTMTAP)
+library(MSstatsShinyAP)
+MSstatsShinyAP::launch_MSstatsShiny()
+
+# Check the actual installed package locations and GitHub source commits.
+for (pkg in c("MSstatsAP", "MSstatsTMTAP", "MSstatsShinyAP")) {
+  print(find.package(pkg))
+  print(packageDescription(pkg)$RemoteSha)
+}
+```
+
+Other MSstats family dependencies retain their original package names and may
+also load the upstream MSstats namespace. AP analyses use the AP imports and
+namespace calls. The upstream overview below is retained for background.
+The linked upstream websites describe the original packages.
+
+---
+
 # MSstatsShiny Tutorial
 
 This repository contains the code for the R Shiny app MSstatsShiny, which utilizes MSstats, MSstatsTMT, and MSstatsPTM to analyze proteomics experiments.
@@ -14,8 +48,8 @@ and run (and channel for TMT).
 
 **Normalize to bait** in the left sidebar defaults to off. When enabled, group
 comparison uses client minus bait log2 abundance from the fork's
-`MSstats::normalizeToBait()` for label-free data or
-`MSstatsTMT::normalizeToBaitTMT()` for TMT data. Existing intensity plots keep the
+`MSstatsAP::normalizeToBait()` for label-free data or
+`MSstatsTMTAP::normalizeToBaitTMT()` for TMT data. Existing intensity plots keep the
 original summary. An installed package without the required function produces a
 clear error when normalization is requested.
 
@@ -40,44 +74,11 @@ rerun it in a fresh session with the same fork builds installed.
 
 All datasets for this tutorial can be found at this [link](https://github.com/Vitek-Lab/MSstatsShiny/tree/devel/inst/extdata/tutorial)
 
-Install MSstatsShiny using the instructions below:
+Install the AP packages using the GitHub commands at the top of this README.
+Use an R/Bioconductor stack compatible with the package dependencies. The AP
+forks are not published under these names on Bioconductor.
 
--   Download R - <https://cran.r-project.org/>. Note R version must be \>= 4.4
-
-    -   Note: if on windows you must also install R Tools - <https://cran.r-project.org/bin/windows/Rtools/>
-
-    -   Optionally you can also install RStudio Desktop - <https://posit.co/downloads/>
-
--   Run R or RStudio (if downloaded)
-
--   In the console run the installation code (see below) (<https://bioconductor.org/packages/release/bioc/html/MSstatsShiny.html>)
-
-```{r}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("MSstatsShiny")
-```
-
--   If this does not work due to a release 3.21 issue, you can install release 3.20 with the following 2 commands:
-
-```{r}
-BiocManager::install(version = '3.20', force = TRUE)
-BiocManager::install('MSstatsShiny', version = '3.20', force = TRUE)
-```
-
--   If you get a bug related to lme4, you can install the latest version of lme4 with the following command:
-
-```{r}
-install.packages("lme4", type = "source")
-```
-
--   You can also install from Github with the following command:
-
-```{r}
-devtools::install_github("Vitek-Lab/MSstatsShiny", build_vignettes = TRUE)
-```
-
--   MSstatsShiny can now be started by running `MSstatsShiny::launch_MSstatsShiny()` in the console
+Start the app with `MSstatsShinyAP::launch_MSstatsShiny()`.
 
 ### Online
 
@@ -86,13 +87,13 @@ The online application is located at <http://www.msstatsshiny.com/>. The online 
 ### Load Package
 
 ```{r}
-library(MSstatsShiny)
+library(MSstatsShinyAP)
 ```
 
 ### Launch MSstatsShiny
 
 ```{r}
-MSstatsShiny::launch_MSstatsShiny()
+MSstatsShinyAP::launch_MSstatsShiny()
 ```
 
 ![Step1A](https://raw.githubusercontent.com/Vitek-Lab/MSstatsShiny/devel/man/figures/Step1A.png)

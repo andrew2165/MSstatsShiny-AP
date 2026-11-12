@@ -29,7 +29,7 @@ test_that("label-free settings restrict the workflow and default to unweighted o
 })
 
 test_that("label-free adjustment delegates variance, missing samples and audit to MSstats", {
-  skip_if_not("normalizeToBait" %in% getNamespaceExports("MSstats"))
+  skip_if_not("normalizeToBait" %in% getNamespaceExports("MSstatsAP"))
   x <- lf_bait_fixture()
   adjusted <- bait_adjust_summary(x, "bait|id", "error", label_free = TRUE)
   expect_null(adjusted$error)
@@ -62,12 +62,12 @@ test_that("label-free exports retain exact bait, variance policy and original su
   expect_no_error(parse(text = code))
   expect_match(code, paste("bait_protein =", deparse1(bait$protein)), fixed = TRUE)
   expect_match(code, 'variance_method = "propagate"', fixed = TRUE)
-  expect_match(code, "comparison_data = MSstats::normalizeToBait(", fixed = TRUE)
+  expect_match(code, "comparison_data = MSstatsAP::normalizeToBait(", fixed = TRUE)
   expect_match(code, "data = comparison_data", fixed = TRUE)
   bait$enabled <- FALSE
   off <- generate_lf_protein_code(list(), list(BIO = "Protein", DDA_DIA = "LType", filetype = "phil"), contrast, bait)
   expect_match(off, "comparison_data = summarized", fixed = TRUE)
-  expect_false(grepl("MSstats::normalizeToBait(", off, fixed = TRUE))
+  expect_false(grepl("MSstatsAP::normalizeToBait(", off, fixed = TRUE))
 })
 
 test_that("missing fork functions and unsupported label-free settings fail clearly", {
@@ -77,7 +77,7 @@ test_that("missing fork functions and unsupported label-free settings fail clear
 })
 
 test_that("label-free normalization preserves log2 and variance safeguards", {
-  skip_if_not("normalizeToBait" %in% getNamespaceExports("MSstats"))
+  skip_if_not("normalizeToBait" %in% getNamespaceExports("MSstatsAP"))
   x <- lf_bait_fixture()
   attr(x$ProteinLevelData, "MSstatsAbundanceScale") <- "log10"
   expect_match(bait_adjust_summary(x, "bait|id", "error", label_free = TRUE)$error, "log2 input")

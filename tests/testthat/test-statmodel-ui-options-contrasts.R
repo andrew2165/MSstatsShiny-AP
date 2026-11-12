@@ -72,7 +72,7 @@ test_that("build_response_curve_panel creates correct UI structure", {
 # ============================================================================
 
 test_that("modeling section header placeholder exists in UI", {
-  ui <- MSstatsShiny::statmodelUI("statmodel")
+  ui <- MSstatsShinyAP::statmodelUI("statmodel")
   ui_html <- htmltools::renderTags(ui)$html
 
   expect_true(grepl(NAMESPACE_STATMODEL$modeling_section_header, ui_html),

@@ -3,7 +3,7 @@
 #' Main LF function to calculate MSstatsShiny results. 
 #' 
 #' @export
-#' @import MSstats
+#' @import MSstatsAP
 #' @importFrom shinybusy show_modal_progress_line update_modal_progress remove_modal_progress
 #' 
 #' @param data Data converted into MSstats format.
@@ -15,7 +15,7 @@
 #' @examples
 #' data("example_dia_skyline")
 #' data("example_skyline_annotation")
-#' testdata = MSstats::SkylinetoMSstatsFormat(example_dia_skyline,
+#' testdata = MSstatsAP::SkylinetoMSstatsFormat(example_dia_skyline,
 #'                                             annotation = example_skyline_annotation,
 #'                                             filter_with_Qvalue = TRUE, 
 #'                                             qvalue_cutoff = 0.01, 
@@ -125,8 +125,8 @@ lf_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator =
 #' Main TMT function to calculate MSstatsShiny results. 
 #' 
 #' @export
-#' @import MSstats
-#' @import MSstatsTMT
+#' @import MSstatsAP
+#' @import MSstatsTMTAP
 #' @import MSstatsConvert
 #' @import data.table
 #' @importFrom shinybusy show_modal_progress_line update_modal_progress remove_modal_progress
@@ -141,10 +141,10 @@ lf_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator =
 #' 
 #' @return list of TMT summarization results
 #' @examples
-#' data(raw.pd, package = "MSstatsTMT")
-#' data(annotation.pd, package = "MSstatsTMT")
+#' data(raw.pd, package = "MSstatsTMTAP")
+#' data(annotation.pd, package = "MSstatsTMTAP")
 #' 
-#' testdata <- MSstatsTMT::PDtoMSstatsTMTFormat(raw.pd, 
+#' testdata <- MSstatsTMTAP::PDtoMSstatsTMTFormat(raw.pd,
 #'                                              annotation.pd,
 #'                                              use_log_file = FALSE
 #'                                              )
@@ -177,11 +177,11 @@ tmt_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator 
   MSstatsConvert::MSstatsLogsSettings(FALSE,
                                       pkg_name = "MSstatsTMT")
   ## Prep functions
-  prep_input = MSstatsTMT:::MSstatsPrepareForSummarizationTMT(
+  prep_input = MSstatsTMTAP:::MSstatsPrepareForSummarizationTMT(
     data, qc_input$summarization, qc_input$global_norm, qc_input$reference_norm,
     qc_input$remove_norm_channel, TRUE, MBimpute, QC_check(qc_input,loadpage_input) 
   )
-  prep_input = MSstatsTMT:::MSstatsNormalizeTMT(prep_input, "peptides", 
+  prep_input = MSstatsTMTAP:::MSstatsNormalizeTMT(prep_input, "peptides",
                                                 qc_input$global_norm)
   
   ## Go inside summarization loop to track progress
@@ -269,20 +269,20 @@ tmt_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator 
     summarized = list(summarized_results, processed)
     
   } else if (qc_input$summarization == "MedianPolish") {
-    summarized = MSstatsTMT:::.summarizeTMP(prep_input, annotation)
+    summarized = MSstatsTMTAP:::.summarizeTMP(prep_input, annotation)
   } else if (qc_input$summarization == "LogSum") {
-    summarized = MSstatsTMT:::.summarizeSimpleStat(prep_input, annotation, 
-                                                   MSstatsTMT:::.logSum)
+    summarized = MSstatsTMTAP:::.summarizeSimpleStat(prep_input, annotation,
+                                                   MSstatsTMTAP:::.logSum)
   } else if (qc_input$summarization == "Median") {
-    summarized = MSstatsTMT:::.summarizeSimpleStat(prep_input, annotation, median)
+    summarized = MSstatsTMTAP:::.summarizeSimpleStat(prep_input, annotation, median)
   }
   
   ## Output functions
-  processed = MSstatsTMT:::getProcessedTMT(summarized, prep_input)
-  summarized = MSstatsTMT:::getSummarizedTMT(summarized)
-  summarized = MSstatsTMT:::MSstatsNormalizeTMT(summarized, "proteins", 
+  processed = MSstatsTMTAP:::getProcessedTMT(summarized, prep_input)
+  summarized = MSstatsTMTAP:::getSummarizedTMT(summarized)
+  summarized = MSstatsTMTAP:::MSstatsNormalizeTMT(summarized, "proteins",
                                                 qc_input$reference_norm)
-  preprocessed = MSstatsTMT:::MSstatsSummarizationOutputTMT(summarized,
+  preprocessed = MSstatsTMTAP:::MSstatsSummarizationOutputTMT(summarized,
                                                             processed, TRUE,
                                                             qc_input$remove_norm_channel)
   if (busy_indicator){
@@ -297,7 +297,7 @@ tmt_summarization_loop = function(data, qc_input,loadpage_input, busy_indicator 
 #' Main LF function to model MSstatsShiny data. 
 #' 
 #' @export
-#' @import MSstats
+#' @import MSstatsAP
 #' @import data.table
 #' @importFrom shinybusy show_modal_progress_line update_modal_progress remove_modal_progress
 #' @importFrom utils txtProgressBar
@@ -374,7 +374,7 @@ lf_model = function(data, contrast.matrix, busy_indicator = TRUE){
 #' Main TMT function to model MSstatsShiny data. 
 #' 
 #' @export
-#' @import MSstatsTMT
+#' @import MSstatsTMTAP
 #' @import data.table
 #' @importFrom shinybusy show_modal_progress_line update_modal_progress remove_modal_progress
 #' 
@@ -386,10 +386,10 @@ lf_model = function(data, contrast.matrix, busy_indicator = TRUE){
 #' 
 #' @return list of TMT modeling results
 #' @examples
-#' data(raw.pd, package = "MSstatsTMT")
-#' data(annotation.pd, package = "MSstatsTMT")
+#' data(raw.pd, package = "MSstatsTMTAP")
+#' data(annotation.pd, package = "MSstatsTMTAP")
 #' 
-#' testdata <- MSstatsTMT::PDtoMSstatsTMTFormat(raw.pd, 
+#' testdata <- MSstatsTMTAP::PDtoMSstatsTMTFormat(raw.pd,
 #'                                              annotation.pd,
 #'                                              use_log_file = FALSE
 #'                                              )#' 
@@ -438,24 +438,24 @@ tmt_model = function(data, input, contrast.matrix, busy_indicator = TRUE){
   }
   
   ## Prep data for modeling
-  summarized = MSstatsTMT:::MSstatsPrepareForGroupComparisonTMT(data$ProteinLevelData, 
+  summarized = MSstatsTMTAP:::MSstatsPrepareForGroupComparisonTMT(data$ProteinLevelData,
                                                                 TRUE,#remove_norm_channel
                                                                 TRUE)#remove_empty_channel
-  contrast_matrix = MSstats::MSstatsContrastMatrix(contrast.matrix,
+  contrast_matrix = MSstatsAP::MSstatsContrastMatrix(contrast.matrix,
                                                    unique(summarized$Group))
-  fitted_models = MSstatsTMT:::MSstatsFitComparisonModelsTMT(summarized)
+  fitted_models = MSstatsTMTAP:::MSstatsFitComparisonModelsTMT(summarized)
   FittedModel = fitted_models$fitted_model
   names(FittedModel) = fitted_models$protein
   
   moderated_flag = isTRUE(as.logical(input[[NAMESPACE_STATMODEL$modeling_tmt_moderation]]))
-  fitted_models = MSstatsTMT:::MSstatsModerateTTest(summarized, 
+  fitted_models = MSstatsTMTAP:::MSstatsModerateTTest(summarized,
                                                     fitted_models, 
                                                     moderated_flag)
   
   testing_results = vector("list", length(fitted_models))
   
   for (i in seq_along(fitted_models)) {
-    testing_result = MSstatsTMT:::MSstatsTestSingleProteinTMT(fitted_models[[i]], 
+    testing_result = MSstatsTMTAP:::MSstatsTestSingleProteinTMT(fitted_models[[i]],
                                                               contrast_matrix)
     testing_results[[i]] = testing_result
     
@@ -466,7 +466,7 @@ tmt_model = function(data, input, contrast.matrix, busy_indicator = TRUE){
     }
   }
   
-  testing_results = MSstatsTMT:::MSstatsGroupComparisonOutputTMT(
+  testing_results = MSstatsTMTAP:::MSstatsGroupComparisonOutputTMT(
     testing_results, "BH") #adj.method
   
   results = list(ComparisonResult = testing_results, 
@@ -498,7 +498,7 @@ bait_contrast_matrix <- function(data, contrast.matrix) {
 }
 
 group_compare_bait_tmt <- function(data, contrast.matrix, moderated) {
-  MSstatsTMT::groupComparisonTMT(
+  MSstatsTMTAP::groupComparisonTMT(
     data, contrast.matrix = contrast.matrix, moderated = moderated,
     save_fitted_models = TRUE, use_log_file = FALSE, verbose = FALSE
   )
@@ -509,7 +509,7 @@ group_compare_bait_tmt <- function(data, contrast.matrix, moderated) {
 #' Main PTM function to model MSstatsShiny data. 
 #' 
 #' @export
-#' @import MSstats
+#' @import MSstatsAP
 #' @import data.table
 #' @importFrom shinybusy show_modal_progress_line update_modal_progress remove_modal_progress
 #' 

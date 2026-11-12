@@ -28,11 +28,11 @@ To install this package, start R (version "4.0") and enter:
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("MSstatsShiny")
+remotes::install_github("andrew2165/MSstatsShiny-AP@feature/label-free-bait-normalization")
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-library(MSstatsShiny)
+library(MSstatsShinyAP)
 ```
 
 # 1. Introduction

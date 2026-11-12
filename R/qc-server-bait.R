@@ -104,17 +104,17 @@ bait_adjust_summary <- function(summary, bait, policy, variance_method = "ignore
         stop("Select a bait protein before enabling bait normalization.", call. = FALSE)
       }
       if (label_free) {
-        if (!"normalizeToBait" %in% getNamespaceExports("MSstats")) {
+        if (!"normalizeToBait" %in% getNamespaceExports("MSstatsAP")) {
           stop("Bait normalization requires an MSstats build that exports normalizeToBait().", call. = FALSE)
         }
-        MSstats::normalizeToBait(summary, bait = bait, missing_bait = policy,
+        MSstatsAP::normalizeToBait(summary, bait = bait, missing_bait = policy,
                                  variance_method = variance_method)
       } else {
-        if (!"normalizeToBaitTMT" %in% getNamespaceExports("MSstatsTMT")) {
+        if (!"normalizeToBaitTMT" %in% getNamespaceExports("MSstatsTMTAP")) {
           stop("Bait normalization requires an MSstatsTMT build that exports normalizeToBaitTMT().",
                call. = FALSE)
         }
-        MSstatsTMT::normalizeToBaitTMT(summary, bait = bait, missing_bait = policy)
+        MSstatsTMTAP::normalizeToBaitTMT(summary, bait = bait, missing_bait = policy)
       }
     }, warning = function(w) {
       warnings <<- c(warnings, conditionMessage(w))

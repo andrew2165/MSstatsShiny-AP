@@ -127,7 +127,7 @@ This is the cycle you will follow to make and test changes.
 In the RStudio **Console**, run:
 
 ```r
-library(MSstatsShiny)
+library(MSstatsShinyAP)
 ```
 
 #### Step 2: Edit, Load, and Test!

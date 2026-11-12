@@ -22,7 +22,7 @@ test_that("bait QC distinguishes absent rows from non-finite abundances", {
 test_that("bait adjustment is opt-in and reports the fork's missing-channel audit", {
   expect_identical(tmt_bait_settings(list())$enabled, FALSE)
   expect_identical(tmt_bait_settings(list())$policy, "error")
-  skip_if_not("normalizeToBaitTMT" %in% getNamespaceExports("MSstatsTMT"))
+  skip_if_not("normalizeToBaitTMT" %in% getNamespaceExports("MSstatsTMTAP"))
 
   channels <- data.frame(
     Mixture = "Plex", TechRepMixture = 1, Run = "Run01",
@@ -81,7 +81,7 @@ test_that("TMT export quotes the exact bait and keeps the original summary", {
   expect_no_error(parse(text = code))
   expect_match(code, paste("bait_protein =", deparse1(bait)), fixed = TRUE)
   expect_match(code, 'missing_bait = "drop"', fixed = TRUE)
-  expect_match(code, "comparison_data = MSstatsTMT::normalizeToBaitTMT(", fixed = TRUE)
+  expect_match(code, "comparison_data = MSstatsTMTAP::normalizeToBaitTMT(", fixed = TRUE)
   expect_match(code, "comparison_data, contrast.matrix = contrast.matrix", fixed = TRUE)
 })
 

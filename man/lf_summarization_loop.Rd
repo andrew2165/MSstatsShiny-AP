@@ -25,7 +25,7 @@ Main LF function to calculate MSstatsShiny results.
 \examples{
 data("example_dia_skyline")
 data("example_skyline_annotation")
-testdata = MSstats::SkylinetoMSstatsFormat(example_dia_skyline,
+testdata = MSstatsAP::SkylinetoMSstatsFormat(example_dia_skyline,
                                             annotation = example_skyline_annotation,
                                             filter_with_Qvalue = TRUE, 
                                             qvalue_cutoff = 0.01, 
