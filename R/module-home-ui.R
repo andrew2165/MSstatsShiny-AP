@@ -59,6 +59,7 @@ homeUI <- function(id) {
           h4("3.", actionButton(inputId = ns("Help"), label = "Help!", onclick ="window.open('https://groups.google.com/g/msstats', '_blank')")),
           br(),
           h2("Notes"),
+          p("- MSstatsShiny-AP and the other -AP packages are forks of the original MSstats repositories with added, opt-in bait normalization functionality. Other workflows are unchanged."),
           p("- All code and documentation is available on ", a("github",
                                                                href="https://github.com/Vitek-Lab/MSstatsShiny")),
           p("- Sample Size and Power calculations are currently not available for TMT experiments."),
